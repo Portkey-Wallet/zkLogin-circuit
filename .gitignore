@@ -2,3 +2,4 @@ node_modules
 out
 *.ptau
 *.zkey
+tests/compiled-test-circuit
