@@ -1,7 +1,7 @@
 import path from "path";
 import { wasm } from "circom_tester";
 import { describe, it } from "vitest";
-import { padString } from "./utils";
+import { padString } from "../utils";
 
 describe("Guardian Identifier test", function () {
   it("Checking the guardian identifier", async function () {

@@ -1,15 +1,6 @@
 // Copyright (c) RoochNetwork
 // SPDX-License-Identifier: Apache-2.0
 
-export const CIRCOM_BIGINT_N = 121;
-export const CIRCOM_BIGINT_K = 17;
-
-export function padString(str: string, paddedBytesSize: number): number[] {
-  let paddedBytes = Array.from(str, (c) => c.charCodeAt(0));
-  paddedBytes.push(...new Array(paddedBytesSize - paddedBytes.length).fill(0));
-  return paddedBytes;
-}
-
 export function bigIntToChunkedBytes(
   // eslint-disable-next-line @typescript-eslint/ban-types
   num: BigInt | bigint,
@@ -23,9 +14,4 @@ export function bigIntToChunkedBytes(
     res.push(((bigintNum >> BigInt(i * bytesPerChunk)) & msk).toString());
   }
   return res;
-}
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function toCircomBigIntBytes(num: BigInt | bigint) {
-  return bigIntToChunkedBytes(num, CIRCOM_BIGINT_N, CIRCOM_BIGINT_K);
 }

@@ -5,4 +5,4 @@ pragma circom 2.1.5;
 
 include "../circuits/helpers/sha256.circom";
 
-component main { public [in_padded, in_len_padded_bytes] } = Sha256Bytes(640);
+component main { public [text] } = Sha256String(640);

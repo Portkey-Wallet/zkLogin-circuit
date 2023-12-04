@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 import { pki } from "node-forge";
 import { wasm as wasm_tester } from "circom_tester";
-import { padString, toCircomBigIntBytes } from "./utils";
 import { describe, beforeAll, it } from "vitest";
+import { padString, toCircomBigIntBytes } from "../utils";
 
 describe("Main Test", () => {
   let circuit: any;
