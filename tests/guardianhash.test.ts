@@ -5,13 +5,13 @@ import { wasm as wasm_tester } from "circom_tester";
 import { describe, beforeAll, it } from "vitest";
 import { padString, toCircomBigIntBytes } from "../utils";
 
-describe("Main Test", () => {
+describe("Guardian Hash Test", () => {
   let circuit: any;
 
-  describe("Main", () => {
+  describe("Guardian Hash Test", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "../circuits/main.circom"),
+        path.join(__dirname, "../circuits/guardianhash.circom"),
         {
           // @dev During development recompile can be set to false if you are only making changes in the tests.
           // This will save time by not recompiling the circuit every time.

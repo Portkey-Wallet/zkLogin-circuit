@@ -2,7 +2,7 @@ pragma circom 2.0.0;
 include "./helpers/jwt.circom";
 include "./helpers/guardian-identifier-hash.circom";
 
-template Main(){
+template GuardianHash(){
   component VERIFYJWT = JWTVerify(512, 121, 17);
   signal input jwt[512];
   signal input signature[17];
@@ -22,4 +22,4 @@ template Main(){
   out <== HASH.hash;
 }
 
-component main = Main();
+component main = GuardianHash();
