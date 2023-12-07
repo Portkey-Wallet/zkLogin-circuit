@@ -10,7 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "circomlib": "^2.0.5"
+    "circomlib": "^2.0.5",
+    "js-sha256": "^0.10.1"
   },
   "devDependencies": {
     "circom_tester": "^0.0.20",

@@ -1,24 +1,45 @@
 pragma circom 2.0.0;
 include "./sha256.circom";
 
-template GuardianIdentifierHash(sub_len, salt_len){
-  var i;
+template GuardianIdentifierHash(sub_bytes, salt_bytes){
+  component HASH1 = Hash1(sub_bytes);
+  signal input sub[sub_bytes];
+  HASH1.sub <== sub;
+  
+  component HASH2 = Hash2(256, salt_bytes);
+  signal input salt[salt_bytes];
+  HASH2.hash1 <== HASH1.sha;
+  HASH2.salt <== salt;
 
-  component HASH1 = Sha256String(sub_len);
-  signal input sub[sub_len];
+  signal output sha[256];
+  sha <== HASH2.sha;
+}
+
+template Hash1(sub_bytes){
+  component HASH1 = Sha256String(sub_bytes);
+  signal input sub[sub_bytes];
   HASH1.text <== sub;
 
-  var hash2_len = salt_len + 256;
+  signal output sha[256];
+  sha <== HASH1.sha;
+}
 
-  component HASH2 = Sha256String(hash2_len);
-  signal input salt[salt_len];
-  for (i=0; i<salt_len; i++) {
+template Hash2(hash1_bytes, salt_bytes){
+  signal input hash1[hash1_bytes];
+
+  var hash2_bytes = hash1_bytes + salt_bytes;
+
+  component HASH2 = Sha256String(hash2_bytes);
+  signal input salt[salt_bytes];
+
+  for(var i = 0; i < salt_bytes; i++){
     HASH2.text[i] <== salt[i];
   }
-  for (i=0; i<256; i++) {
-    HASH2.text[i+salt_len] <== HASH1.sha[i];
+
+  for(var i = salt_bytes; i < hash2_bytes; i++){
+    HASH2.text[i] <== hash1[i - salt_bytes];
   }
 
-  signal output hash[256];
-  hash <== HASH2.sha;
+  signal output sha[256];
+  sha <== HASH2.sha;
 }
