@@ -1,5 +1,6 @@
 pragma circom 2.0.0;
 include "./sha256.circom";
+include "./string.circom";
 
 template GuardianIdentifierHash(sub_bytes, salt_bytes){
   component HASH1 = Hash1(sub_bytes);
@@ -26,19 +27,17 @@ template Hash1(sub_bytes){
 
 template Hash2(hash1_bytes, salt_bytes){
   signal input hash1[hash1_bytes];
-
-  var hash2_bytes = hash1_bytes + salt_bytes;
-
-  component HASH2 = Sha256String(hash2_bytes);
   signal input salt[salt_bytes];
 
-  for(var i = 0; i < salt_bytes; i++){
-    HASH2.text[i] <== salt[i];
-  }
+  // salt + hash1
+  component CONCAT = Concat(salt_bytes, hash1_bytes);
+  CONCAT.text1 <== salt;
+  CONCAT.text2 <== hash1;
 
-  for(var i = salt_bytes; i < hash2_bytes; i++){
-    HASH2.text[i] <== hash1[i - salt_bytes];
-  }
+  // hash(salt + hash1)
+  var hash2_bytes = salt_bytes + hash1_bytes;
+  component HASH2 = Sha256String(hash2_bytes);
+  HASH2.text <== CONCAT.out;
 
   signal output sha[256];
   sha <== HASH2.sha;

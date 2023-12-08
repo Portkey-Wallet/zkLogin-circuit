@@ -1,17 +1,16 @@
 import path from "path";
 import { wasm } from "circom_tester";
 import { beforeAll, describe, it } from "vitest";
-import { padString, shaHash, uint8ToBits } from "../utils";
-import { sha256 } from "js-sha256";
+import { padString, uint8ToBits, shaHash } from "../utils";
 let encoder = new TextEncoder();
 
 describe("Guardian Identifier test", function () {
   let circuit;
 
-  describe("Hash should be correct", () => {
+  describe("Hash1 should be correct", () => {
     beforeAll(async () => {
       circuit = await wasm(
-        path.join(__dirname, "./guardian-identifier-hash.circom"),
+        path.join(__dirname, "./guardian-identifier-hash1.circom"),
         {
           // @dev During development recompile can be set to false if you are only making changes in the tests.
           // This will save time by not recompiling the circuit every time.
@@ -23,18 +22,16 @@ describe("Guardian Identifier test", function () {
       );
     });
 
-    it("should hash correctly", async function () {
-      const sub = "01",
-        salt = "75f8c36b93874977b47bb92a3f7c1536",
-        hash1 = sha256(sub);
+    it("should hash1 correctly", async function () {
+      const input = "01";
+      const padText = padString(input, 256);
       const witness = await circuit.calculateWitness({
-        sub: padString(sub, 256),
-        salt: padString(salt, 128),
+        sub: padText,
       });
 
       await circuit.checkConstraints(witness);
       await circuit.assertOut(witness, {
-        sha: [...uint8ToBits(shaHash(encoder.encode(salt + hash1)))],
+        sha: [...uint8ToBits(shaHash(encoder.encode(input)))],
       });
     });
   });
