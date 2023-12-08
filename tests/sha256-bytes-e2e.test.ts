@@ -12,7 +12,7 @@ describe("Sha256Bytes test", function () {
   describe("Hash should be correct", () => {
     beforeAll(async () => {
       circuit = await wasm(
-        path.join(__dirname, "./sha256-bytes-test.circom"),
+        path.join(__dirname, "./sha256-bytes-bytes.circom"),
         {
           // @dev During development recompile can be set to false if you are only making changes in the tests.
           // This will save time by not recompiling the circuit every time.
@@ -26,6 +26,7 @@ describe("Sha256Bytes test", function () {
 
     it("should hash correctly", async function () {
       const bytes = hexToBytes("01");
+      const hash = hexToBytes("4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a");
       const [paddedMsg, messageLen] = sha256Pad(bytes, 256);
       const witness = await circuit.calculateWitness({
         in_len_padded_bytes: messageLen,
@@ -34,7 +35,7 @@ describe("Sha256Bytes test", function () {
 
       await circuit.checkConstraints(witness);
       await circuit.assertOut(witness, {
-        out: [...shaHash(bytes)],
+        out: [...hash],
       });
     });
   });
