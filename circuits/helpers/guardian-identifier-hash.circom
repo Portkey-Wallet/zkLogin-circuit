@@ -3,26 +3,30 @@ include "./sha256.circom";
 include "./string.circom";
 
 template GuardianIdentifierHash(sub_bytes, salt_bytes){
-  component HASH1 = Hash1(sub_bytes);
+  // inputs
   signal input sub[sub_bytes];
-  HASH1.sub <== sub;
-  
-  component HASH2 = Hash2(256, salt_bytes);
   signal input salt[salt_bytes];
-  HASH2.hash1 <== HASH1.sha;
-  HASH2.salt <== salt;
+
+  component HASH1 = Sha256Bytes(sub_bytes);
+  HASH1.in_padded <== sub;
+  HASH1.in_len_padded_bytes <== sub_bytes;
+  
+  var hash2_bytes = salt_bytes + 256;
+  component HASH2 = Sha256Bytes(hash2_bytes);
+  HASH2.in_len_padded_bytes <== hash2_bytes;
+
+  // assign the salt to the input for the second hash
+  for (var i = 0; i < salt_bytes; i++) {
+      HASH2.in_padded[i] <== salt[i];
+  }
+
+  // assign the hash of hash1 to the input for the second hash
+  for (var i = 0; i < 256; i++) {
+      HASH2.in_padded[i + salt_bytes] <== HASH1.out[i];
+  }
 
   signal output sha[256];
   sha <== HASH2.sha;
-}
-
-template Hash1(sub_bytes){
-  component HASH1 = Sha256Bytes(sub_bytes);
-  signal input sub[sub_bytes];
-  HASH1.text <== sub;
-
-  signal output sha[256];
-  sha <== HASH1.sha;
 }
 
 template Hash2(hash1_bytes, salt_bytes){

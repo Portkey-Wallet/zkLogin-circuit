@@ -2,13 +2,12 @@ import path from "path";
 import { wasm } from "circom_tester";
 import { beforeAll, describe, it } from "vitest";
 import {
-  padString,
   uint8ToBits,
   shaHash,
   sha256Pad,
   Uint8ArrayToCharArray,
 } from "../utils";
-let encoder = new TextEncoder();
+import { hexToBytes } from "../utils";
 
 describe("Guardian Identifier test", function () {
   let circuit;
@@ -29,8 +28,10 @@ describe("Guardian Identifier test", function () {
     });
 
     it("should hash1 correctly", async function () {
-      const input = "01";
-      const [paddedMsg, messageLen] = sha256Pad(encoder.encode(input), 256 * 8);
+      const input = hexToBytes(
+        "01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+      );
+      const [paddedMsg, messageLen] = sha256Pad(input, 512);
 
       const witness = await circuit.calculateWitness({
         in_len_padded_bytes: messageLen,
@@ -39,7 +40,7 @@ describe("Guardian Identifier test", function () {
 
       await circuit.checkConstraints(witness);
       await circuit.assertOut(witness, {
-        out: [...uint8ToBits(shaHash(encoder.encode(input)))],
+        out: [...uint8ToBits(shaHash(input))],
       });
     });
   });

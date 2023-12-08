@@ -1,3 +1,4 @@
+export { hexToBytes } from "./hex-to-bytes";
 export { uint8ToBits } from "./binary-format";
 export { Uint8ArrayToCharArray } from "./binary-format";
 export { shaHash } from "./sha-hash";
