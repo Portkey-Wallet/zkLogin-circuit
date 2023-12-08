@@ -17,7 +17,7 @@ template GuardianIdentifierHash(sub_bytes, salt_bytes){
 }
 
 template Hash1(sub_bytes){
-  component HASH1 = Sha256String(sub_bytes);
+  component HASH1 = Sha256Bytes(sub_bytes);
   signal input sub[sub_bytes];
   HASH1.text <== sub;
 
@@ -36,7 +36,7 @@ template Hash2(hash1_bytes, salt_bytes){
 
   // hash(salt + hash1)
   var hash2_bytes = salt_bytes + hash1_bytes;
-  component HASH2 = Sha256String(hash2_bytes);
+  component HASH2 = Sha256Bytes(hash2_bytes);
   HASH2.text <== CONCAT.out;
 
   signal output sha[256];
