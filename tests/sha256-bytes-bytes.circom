@@ -19,4 +19,4 @@ template Sha256BytesOutputBytes(max_num_bytes) {
     out <-- B2B.out;
 }
 
-component main { public [in_padded, in_len_padded_bytes] } = Sha256BytesOutputBytes(256);
+component main { public [in_padded, in_len_padded_bytes] } = Sha256BytesOutputBytes(640);

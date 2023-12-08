@@ -36,11 +36,20 @@ template GuardianIdentifierHash(sub_bytes, salt_bytes){
 
   COMBINED.first <== bitsToBytes.out;
   COMBINED.second <== salt;
+  var paddedBytes[640];
+  for (var i = 0; i < 32 + salt_bytes; i++) {
+      paddedBytes[i] = COMBINED.out[i];
+  }
 
-  component sha256Pad = Sha256Pad(32+salt_bytes);
-  sha256Pad.text <== COMBINED.out;
+  for (var i = 32 + salt_bytes; i < 640; i++) {
+      paddedBytes[i] = 0;
+  }
 
-  component HASH2 = Sha256Bytes(32+salt_bytes);
+  component sha256Pad = Sha256PadBytes(640);
+  sha256Pad.in <== paddedBytes;
+  sha256Pad.in_bytes <== 32 + salt_bytes;
+
+  component HASH2 = Sha256Bytes(640);
 
   HASH2.in_padded <== sha256Pad.padded_text;
   HASH2.in_len_padded_bytes <== sha256Pad.padded_len;
