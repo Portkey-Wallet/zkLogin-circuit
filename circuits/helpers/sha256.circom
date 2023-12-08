@@ -32,6 +32,26 @@ template Sha256Bytes(max_num_bytes) {
     }
 }
 
+template Sha256PadBytes(max_bytes) {
+    signal input in[max_bytes];
+    signal input in_bytes;
+    signal output padded_text[max_bytes];
+    signal output padded_len;
+
+    // in_bytes + 1 bytes + 8 bytes length < max_bytes
+    assert(in_bytes + 9 < max_bytes);
+
+    padded_len <-- (in_bytes + 9) + (64 - (in_bytes + 9) % 64);
+    assert(padded_len % 64 == 0);
+
+    component len2bytes = Packed2BytesBigEndian(8);
+    len2bytes.in <== in_bytes * 8;
+
+    for (var i = 0; i < max_bytes; i++) {
+        padded_text[i] <-- i < in_bytes ? in[i] : (i == in_bytes ? (1 << 7) : (i < padded_len ? (i % 64 < 56 ? 0 : (i % 64 > 56 ? len2bytes.out[(i % 64 - 56)]: 0)) : 0)); // Add the 1 on the end and text length
+    }
+}
+
 template Sha256Pad(max_bytes) {
     signal input text[max_bytes];
     signal output padded_text[max_bytes];
