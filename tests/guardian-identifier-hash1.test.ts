@@ -28,15 +28,19 @@ describe("Guardian Identifier test", function () {
     });
 
     it("should hash1 correctly", async function () {
-      const input = hexToBytes(
-        "01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-      );
-      const [paddedMsg, messageLen] = sha256Pad(input, 512);
+      const hash =
+        "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a";
+      const salt = "8a7e44fa4a244e28a65ed89962997c41";
+      const combined = hash + salt;
+      const input = hexToBytes(combined);
+      const [paddedMsg, messageLen] = sha256Pad(input, (48 + 64) * 8);
 
       const witness = await circuit.calculateWitness({
         in_len_padded_bytes: messageLen,
         in_padded: Uint8ArrayToCharArray(paddedMsg),
       });
+
+      console.log(shaHash(input).toString("hex"));
 
       await circuit.checkConstraints(witness);
       await circuit.assertOut(witness, {

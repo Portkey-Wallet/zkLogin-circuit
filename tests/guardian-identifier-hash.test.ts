@@ -1,8 +1,9 @@
 import path from "path";
 import { wasm } from "circom_tester";
 import { beforeAll, describe, it } from "vitest";
-import { padString, shaHash, uint8ToBits } from "../utils";
+import { hexToBytes, padString, shaHash, uint8ToBits } from "../utils";
 import { sha256 } from "js-sha256";
+import { padBytes } from "../utils/pad-bytes";
 let encoder = new TextEncoder();
 
 describe("Guardian Identifier test", function () {
@@ -24,17 +25,31 @@ describe("Guardian Identifier test", function () {
     });
 
     it("should hash correctly", async function () {
-      const sub = "01",
-        salt = "75f8c36b93874977b47bb92a3f7c1536",
-        hash1 = sha256(sub);
+      const sub = hexToBytes("01");
+      const salt = hexToBytes("8a7e44fa4a244e28a65ed89962997c41");
+
       const witness = await circuit.calculateWitness({
-        sub: padString(sub, 256),
-        salt: padString(salt, 128),
+        sub: padBytes(sub, 256),
+        salt: padBytes(salt, 32),
       });
+
+      console.log([
+        ...uint8ToBits(
+          hexToBytes(
+            "ac379499210dc4af65b537bd5deed7033d664cb2b55965105e8ad68fadb13456"
+          )
+        ),
+      ]);
 
       await circuit.checkConstraints(witness);
       await circuit.assertOut(witness, {
-        sha: [...uint8ToBits(shaHash(encoder.encode(salt + hash1)))],
+        out: [
+          ...uint8ToBits(
+            hexToBytes(
+              "ac379499210dc4af65b537bd5deed7033d664cb2b55965105e8ad68fadb13456"
+            )
+          ),
+        ],
       });
     });
   });
