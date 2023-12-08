@@ -12,7 +12,7 @@ describe("Guardian Identifier test", function () {
   describe("Hash should be correct", () => {
     beforeAll(async () => {
       circuit = await wasm(
-        path.join(__dirname, "./guardian-identifier-hash.circom"),
+        path.join(__dirname, "./bits-to-bytes.circom"),
         {
           // @dev During development recompile can be set to false if you are only making changes in the tests.
           // This will save time by not recompiling the circuit every time.
@@ -25,29 +25,14 @@ describe("Guardian Identifier test", function () {
     });
 
     it("should hash correctly", async function () {
-      const sub = hexToBytes("01");
-      const salt = hexToBytes("8a7e44fa4a244e28a65ed89962997c41");
-
+      const bytes = hexToBytes("ac379499210dc4af65b537bd5deed7033d664cb2b55965105e8ad68fadb13456");
       const witness = await circuit.calculateWitness({
-        sub: padBytes(sub, 256),
-        salt: padBytes(salt, 32),
+        in: [...uint8ToBits(bytes)]
       });
-
-      console.log([
-        ...uint8ToBits(
-          hexToBytes(
-            "ac379499210dc4af65b537bd5deed7033d664cb2b55965105e8ad68fadb13456"
-          )
-        ),
-      ]);
 
       await circuit.checkConstraints(witness);
       await circuit.assertOut(witness, {
-        out: [
-          ...hexToBytes(
-            "ac379499210dc4af65b537bd5deed7033d664cb2b55965105e8ad68fadb13456"
-          ),
-        ],
+        out: [...bytes],
       });
     });
   });
