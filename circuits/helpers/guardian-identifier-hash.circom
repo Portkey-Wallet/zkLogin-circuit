@@ -51,21 +51,21 @@ template HashAndCombine(sub_bytes, salt_bytes){
 template GuardianIdentifierHash(sub_bytes, salt_bytes){
   // inputs
   signal input sub[sub_bytes];
+  signal input sub_len;
   signal input salt[salt_bytes];
+  signal input salt_len;
   signal output out[32];
 
-  component HASH1 = Sha256BytesOutputBytes(sub_bytes);
-  HASH1.in_padded <== sub;
-  HASH1.in_len_padded_bytes <== sub_bytes;
+  component hashAndCombine = HashAndCombine(sub_bytes, salt_bytes);
+  hashAndCombine.sub <== sub;
+  hashAndCombine.sub_len <== sub_len;
+  hashAndCombine.salt <== salt;
   
   var hash2_bytes = salt_bytes + 32;
-  
-  component COMBINED = CombineBytes(32, salt_bytes);
-  COMBINED.first <== HASH1.out;
-  COMBINED.second <== salt;
+
   var paddedBytes[640];
   for (var i = 0; i < 32 + salt_bytes; i++) {
-      paddedBytes[i] = COMBINED.out[i];
+      paddedBytes[i] = hashAndCombine.out[i];
   }
 
   for (var i = 32 + salt_bytes; i < 640; i++) {
@@ -74,15 +74,11 @@ template GuardianIdentifierHash(sub_bytes, salt_bytes){
 
   component sha256Pad = Sha256PadBytes(640);
   sha256Pad.in <== paddedBytes;
-  sha256Pad.in_bytes <== 32 + salt_bytes;
+  sha256Pad.in_bytes <== 32 + salt_len;
 
-  component HASH2 = Sha256Bytes(640);
-
+  component HASH2 = Sha256BytesOutputBytes(640);
+  
   HASH2.in_padded <== sha256Pad.padded_text;
   HASH2.in_len_padded_bytes <== sha256Pad.padded_len;
-
-  component bitsToBytes2 = BitsToBytes(256);
-
-  bitsToBytes2.in <== HASH2.out;
-  out <-- bitsToBytes2.out;
+  out <-- HASH2.out;
 }

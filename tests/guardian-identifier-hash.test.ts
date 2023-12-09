@@ -30,14 +30,14 @@ describe("Guardian Identifier test", function () {
 
       const witness = await circuit.calculateWitness({
         sub: padBytes(sub, 256),
+        sub_len: sub.length,
         salt: padBytes(salt, 32),
+        salt_len: salt.length
       });
 
       console.log([
-        ...uint8ToBits(
           hexToBytes(
             "ac379499210dc4af65b537bd5deed7033d664cb2b55965105e8ad68fadb13456"
-          )
         ),
       ]);
 
