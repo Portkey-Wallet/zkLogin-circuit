@@ -18,8 +18,8 @@ template GuardianHash(){
   HASH.sub <== sub;
   HASH.salt <== salt;
 
-  signal output out[256];
-  out <== HASH.hash;
+  signal output out[32];
+  out <== HASH.out;
 }
 
 component main = GuardianHash();
