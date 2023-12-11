@@ -203,3 +203,32 @@ template MakeAnonEmailSalt(email_len, blinder_len) {
     blinder_matches <== intermediate_is_message_id_from[blinder_len];
     anon_salt <== hasher.outs[0];
 }
+
+
+template CombineBytes(first_bytes, second_bytes) {
+  // inputs
+  signal input first[first_bytes];
+  signal input second[second_bytes];
+
+  signal output out[first_bytes + second_bytes];
+
+  for (var i = 0; i < first_bytes; i++) {
+      out[i] <== first[i];
+  }
+
+  for (var i = 0; i < second_bytes; i++) {
+      out[i + first_bytes] <== second[i];
+  }
+}
+
+template BitsToBytes(bits){
+  signal input in[bits];
+  signal output out[bits/8];
+  for (var i=0; i<bits/8; i++) {
+    var bytevalue = 0;
+    for (var j=0; j<8; j++) {
+      bytevalue |= in[i * 8 + j] ? (1 << (7-j)) : 0;
+    }
+    out[i] <-- bytevalue;
+  }
+}

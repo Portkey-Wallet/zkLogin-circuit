@@ -1,49 +1,84 @@
 pragma circom 2.0.0;
 include "./sha256.circom";
 include "./string.circom";
+include "./utils.circom";
 include "circomlib/circuits/bitify.circom";
 
-template GuardianIdentifierHash(sub_bytes, salt_bytes){
+template Hash(sub_bytes){
+  signal input sub[sub_bytes];
+  signal input sub_len;
+  signal output out[32];
+
+  var paddedBytes[640];
+  for (var i = 0; i < sub_len; i++) {
+      paddedBytes[i] = sub[i];
+  }
+
+  for (var i = sub_len; i < 640; i++) {
+      paddedBytes[i] = 0;
+  }
+
+  component sha256Pad = Sha256PadBytes(640);
+  sha256Pad.in <-- paddedBytes;
+  sha256Pad.in_bytes <== sub_len;
+
+  component HASH1 = Sha256BytesOutputBytes(640);
+  
+  HASH1.in_padded <== sha256Pad.padded_text;
+  HASH1.in_len_padded_bytes <== sha256Pad.padded_len;
+  out <-- HASH1.out;
+}
+
+template HashAndCombine(sub_bytes, salt_bytes){
   // inputs
   signal input sub[sub_bytes];
+  signal input sub_len;
   signal input salt[salt_bytes];
-  signal output out[64];
+  signal output out[32+salt_bytes];
 
-  component HASH1 = Sha256Bytes(sub_bytes);
-  HASH1.in_padded <== sub;
-  HASH1.in_len_padded_bytes <== sub_bytes;
+  component HASH1 = Hash(sub_bytes);
+  HASH1.sub <== sub;
+  HASH1.sub_len <== sub_len;
   
   var hash2_bytes = salt_bytes + 32;
   
   component COMBINED = CombineBytes(32, salt_bytes);
-
-  for (var i=0; i<32; i++) {
-    var bytevalue = 0;
-    for (var j=0; j<8; j++) {
-      bytevalue |= HASH1.out[i * 8 + j] ? (1 << (7-j)) : 0;
-    }
-    COMBINED.first[i] <== bytevalue;
-  }
-
+  COMBINED.first <== HASH1.out;
   COMBINED.second <== salt;
-
-  component sha256Pad = Sha256Pad(64);
-  sha256Pad.text <== COMBINED.out;
-  out <== Sha256Bytes(64)(sha256Pad.padded_text, sha256Pad.padded_len);
+  out <-- COMBINED.out;
 }
 
-template CombineBytes(first_bytes, second_bytes) {
+template GuardianIdentifierHash(sub_bytes, salt_bytes){
   // inputs
-  signal input first[first_bytes];
-  signal input second[second_bytes];
+  signal input sub[sub_bytes];
+  signal input sub_len;
+  signal input salt[salt_bytes];
+  signal input salt_len;
+  signal output out[32];
 
-  signal output out[first_bytes + second_bytes];
+  component hashAndCombine = HashAndCombine(sub_bytes, salt_bytes);
+  hashAndCombine.sub <== sub;
+  hashAndCombine.sub_len <== sub_len;
+  hashAndCombine.salt <== salt;
+  
+  var hash2_bytes = salt_bytes + 32;
 
-  for (var i = 0; i < first_bytes; i++) {
-      out[i] <== first[i];
+  var paddedBytes[640];
+  for (var i = 0; i < 32 + salt_bytes; i++) {
+      paddedBytes[i] = hashAndCombine.out[i];
   }
 
-  for (var i = 0; i < second_bytes; i++) {
-      out[i + first_bytes] <== second[i];
+  for (var i = 32 + salt_bytes; i < 640; i++) {
+      paddedBytes[i] = 0;
   }
+
+  component sha256Pad = Sha256PadBytes(640);
+  sha256Pad.in <== paddedBytes;
+  sha256Pad.in_bytes <== 32 + salt_len;
+
+  component HASH2 = Sha256BytesOutputBytes(640);
+  
+  HASH2.in_padded <== sha256Pad.padded_text;
+  HASH2.in_len_padded_bytes <== sha256Pad.padded_len;
+  out <-- HASH2.out;
 }

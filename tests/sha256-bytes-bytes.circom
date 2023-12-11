@@ -3,6 +3,8 @@
 
 pragma circom 2.1.5;
 
+include "../circuits/helpers/sha256.circom";
+
 include "../circuits/helpers/guardian-identifier-hash.circom";
 
-component main { public [ sub, sub_len, salt, salt_len ] } = GuardianIdentifierHash(256, 32);
+component main { public [in_padded, in_len_padded_bytes] } = Sha256BytesOutputBytes(640);
