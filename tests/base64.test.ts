@@ -73,7 +73,7 @@ describe("Base64", () => {
           // Compile: circom "./tests/email-verifier-test.circom" --r1cs --wasm --sym --c --wat --output "./tests/compiled-test-circuit"
           recompile: true,
           output: path.join(__dirname, "./compiled-test-circuit"),
-          include: path.join(__dirname, "../../../node_modules"),
+          include: path.join(__dirname, "../node_modules"),
         }
       );
     });
