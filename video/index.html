@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/asciinema-player.css" />
+  </head>
+  <body>
+    <div id="demo"></div>
+    <script src="/asciinema-player.min.js"></script>
+    <script>
+      AsciinemaPlayer.create("/circom.cast", document.getElementById("demo"), {
+        cols: 80,
+        rows: 24,
+        autoPlay: true,
+        idleTimeLimit: 1,
+        markers: [
+          [0.5, "Compiling circuit"],
+          [6, "Circuit compiled"],
+          [8, "Generate input.json"],
+          [14, "Compute witness"],
+          [
+            18,
+            "Start new Powers of Tau ceremony - 1 million (2^20) constraints",
+          ],
+          [30, "Contribute to Phase 1"],
+          [337, "Start Phase 2"],
+          [825, "Start a new zkey"],
+          [832, "Contribute to Phase 2"],
+          [870, "Export the verification key"],
+          [874, "Generate the proof"],
+          [877, "Verify the proof"],
+        ],
+      });
+    </script>
+  </body>
+</html>
