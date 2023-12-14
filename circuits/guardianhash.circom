@@ -8,24 +8,24 @@ template GuardianHash(){
   signal input jwt[512];
   signal input signature[17];
   signal input pubkey[17];
-  signal input sub[256];
   signal input salt[32]; // public
   signal output out[32];
 
   component VERIFYJWT = JWTVerify(512, 121, 17);
   component HASH = GuardianIdentifierHash(256, 32);
-  component GETSUB = ExtractSubFromJWT();
+  component GETSUB = ExtractSubFromJWT(512, 256);
 
   GETSUB.jwt <== jwt;
-  assert(GETSUB.out == sub);
 
   // verify that the jwt is valid and not tampered with
   VERIFYJWT.jwt <== jwt;
   VERIFYJWT.signature <== signature;
   VERIFYJWT.pubkey <== pubkey;
   
-  HASH.sub <== sub;
+  HASH.sub <== GETSUB.sub;
+  HASH.sub_len <== GETSUB.sub_len;
   HASH.salt <== salt;
+  HASH.salt_len <== 32;
 
   out <== HASH.out;
 }

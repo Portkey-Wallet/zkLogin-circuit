@@ -48,8 +48,7 @@ describe("Guardian Hash Test", () => {
         ),
         signature: toCircomBigIntBytes(signatureBigInt),
         pubkey: toCircomBigIntBytes(pubkeyBigInt),
-        sub: padString("116111375152810828167", 512),
-        salt: padString("a677999396dc49a28ad6c9c242719bb3", 512),
+        salt: padString("a677999396dc49a28ad6c9c242719bb3", 32),
       });
       console.log("duration:", new Date().getTime() - startTime);
 

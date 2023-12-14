@@ -28,15 +28,16 @@ describe("JWT Sub Extract", () => {
           512
         ),
         padString("1234567890", 256),
+        10,
       ],
     ];
 
-    for (const [jwt, sub] of inputs) {
+    for (const [jwt, sub, sub_len] of inputs) {
       const witness = await circuit.calculateWitness({
         jwt,
       });
       await circuit.checkConstraints(witness);
-      await circuit.assertOut(witness, { sub });
+      await circuit.assertOut(witness, { sub, sub_len });
     }
   });
 });
