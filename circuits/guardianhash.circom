@@ -1,25 +1,33 @@
 pragma circom 2.0.0;
 include "./helpers/jwt.circom";
 include "./helpers/guardian-identifier-hash.circom";
+include "./helpers/base64.circom";
+include "./helpers/jwt-sub-extract.circom";
 
 template GuardianHash(){
-  component VERIFYJWT = JWTVerify(512, 121, 17);
   signal input jwt[512];
   signal input signature[17];
   signal input pubkey[17];
+  signal input salt[32]; // public
+  signal output out[32];
 
+  component VERIFYJWT = JWTVerify(512, 121, 17);
+  component HASH = GuardianIdentifierHash(256, 32);
+  component GETSUB = ExtractSubFromJWT(512, 256);
+
+  GETSUB.jwt <== jwt;
+
+  // verify that the jwt is valid and not tampered with
   VERIFYJWT.jwt <== jwt;
   VERIFYJWT.signature <== signature;
   VERIFYJWT.pubkey <== pubkey;
-
-  signal input sub[512];
-  signal input salt[512]; // public
-  component HASH = GuardianIdentifierHash(512, 512);
-  HASH.sub <== sub;
+  
+  HASH.sub <== GETSUB.sub;
+  HASH.sub_len <== GETSUB.sub_len;
   HASH.salt <== salt;
+  HASH.salt_len <== 32;
 
-  signal output out[32];
   out <== HASH.out;
 }
 
-component main = GuardianHash();
+component main {public [pubkey, salt]} = GuardianHash();
