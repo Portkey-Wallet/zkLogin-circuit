@@ -30,4 +30,4 @@ template GuardianHash(){
   out <== HASH.out;
 }
 
-component main = GuardianHash();
+component main {public [pubkey, salt]} = GuardianHash();
