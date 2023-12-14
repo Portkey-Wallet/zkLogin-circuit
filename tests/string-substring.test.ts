@@ -41,5 +41,29 @@ describe("Substring Test", () => {
         await circuit.assertOut(witness, { substring: output });
       }
     });
+
+    it("should extract sub from jwt payload be ok", async function () {
+      const inputs = [
+        [
+          padString(
+            '{"sub":"1234567890","name":"John Doe","admin":true,"iat":1516239022}',
+            256
+          ),
+          8,
+          10,
+          padString("1234567890", 64),
+        ],
+      ];
+
+      for (const [text, startIndex, count, output] of inputs) {
+        const witness = await circuit.calculateWitness({
+          text,
+          startIndex,
+          count,
+        });
+        await circuit.checkConstraints(witness);
+        await circuit.assertOut(witness, { substring: output });
+      }
+    });
   });
 });
