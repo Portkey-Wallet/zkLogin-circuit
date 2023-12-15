@@ -1,5 +1,5 @@
 circom circuits/guardianhash.circom --r1cs --sym --wasm -l node_modules -o out
-npx ts-node src/generate-input.ts
+npx tsx src/generate-input.ts
 cd out/guardianhash_js
 cat input.json
 node generate_witness.js guardianhash.wasm input.json ../witness.wtns
