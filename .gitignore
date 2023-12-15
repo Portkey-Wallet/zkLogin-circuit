@@ -3,3 +3,5 @@ out
 *.ptau
 *.zkey
 tests/compiled-test-circuit
+*.r1cs
+*.wtns
