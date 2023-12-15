@@ -7,6 +7,7 @@ Run `npm install` at the terminal.
 ## Build circuit
 
 ```bash
+mkdir bls12381
 circom circuits/guardianhash.circom --r1cs --sym --json --wasm -l node_modules -o bls12381 --prime bls12381
 ```
 
