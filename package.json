@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest",
-    "generateinput": "tsx src/generate-input.ts"
+    "generateinput": "tsx scripts/generate-input.ts"
   },
   "keywords": [],
   "author": "",
