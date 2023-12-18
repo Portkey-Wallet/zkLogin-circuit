@@ -63,7 +63,7 @@ inquirer
       type: "input",
       name: "filename",
       message: "Enter filename:",
-      default: "ceremony/bls12381/input.json",
+      default: "bls12381/input.json",
     },
   ])
   .then((answers) => {
