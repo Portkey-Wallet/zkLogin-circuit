@@ -3,7 +3,7 @@ import path from "path";
 import { pki } from "node-forge";
 import { wasm as wasm_tester } from "circom_tester";
 import { describe, beforeAll, it } from "vitest";
-import { padString, toCircomBigIntBytes } from "../utils";
+import { hexToBytes, padString, toCircomBigIntBytes } from "../utils";
 
 describe("Guardian Hash Test", () => {
   let circuit: any;
@@ -51,11 +51,12 @@ describe("Guardian Hash Test", () => {
         salt: padString("a677999396dc49a28ad6c9c242719bb3", 32),
       });
       console.log("duration:", new Date().getTime() - startTime);
+      const bytes = hexToBytes("5f313a06c37471dd1fb5e0c73adc6edf1ef2c099d2bff5479b49d7dccc662a6c");
 
       await circuit.checkConstraints(witness);
-
-      // TODO: prepare test case
-      // await circuit.assertOut(witness, { out: "" });
+      await circuit.assertOut(witness, {
+        out: [...bytes],
+      });
     });
   });
 });
