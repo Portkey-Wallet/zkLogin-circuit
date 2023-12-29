@@ -48,10 +48,11 @@ describe("Guardian Hash Test", () => {
         ),
         signature: toCircomBigIntBytes(signatureBigInt),
         pubkey: toCircomBigIntBytes(pubkeyBigInt),
-        salt: padString("a677999396dc49a28ad6c9c242719bb3", 32),
+        salt: Array.from(hexToBytes("a677999396dc49a28ad6c9c242719bb3"), (b) => b),
       });
-      console.log("duration:", new Date().getTime() - startTime);
-      const bytes = hexToBytes("5f313a06c37471dd1fb5e0c73adc6edf1ef2c099d2bff5479b49d7dccc662a6c");
+
+      // Sub is "1234567890"
+      const bytes = hexToBytes("7f0bdbbd5bc4c68c21afe63067d39bbc863432cec2c56b9d351cad89346a8b47");
 
       await circuit.checkConstraints(witness);
       await circuit.assertOut(witness, {

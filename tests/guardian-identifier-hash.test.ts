@@ -47,6 +47,26 @@ describe("Guardian Identifier test", function () {
       });
     });
 
+    it("actual case", async function () {
+      const sub = new TextEncoder().encode("1234567890");
+      const salt = hexToBytes("a677999396dc49a28ad6c9c242719bb3");
+
+      const witness = await circuit.calculateWitness({
+        sub: padBytes(sub, 256),
+        sub_len: sub.length,
+        salt: padBytes(salt, 32),
+        salt_len: salt.length
+      });
+
+      await circuit.checkConstraints(witness);
+      await circuit.assertOut(witness, {
+        out: [
+          ...hexToBytes(
+            "7f0bdbbd5bc4c68c21afe63067d39bbc863432cec2c56b9d351cad89346a8b47"
+          ),
+        ],
+      });
+    });
 
     it("should work for test cases", async function () {
 
