@@ -5,15 +5,15 @@ include "./helpers/base64.circom";
 include "./helpers/jwt-sub-extract.circom";
 
 template GuardianHash(){
-  signal input jwt[512];
+  signal input jwt[2048];
   signal input signature[17];
   signal input pubkey[17];
   signal input salt[16]; // public
   signal output out[32];
 
-  component VERIFYJWT = JWTVerify(512, 121, 17);
+  component VERIFYJWT = JWTVerify(2048, 121, 17);
   component HASH = GuardianIdentifierHash(256, 16);
-  component GETSUB = ExtractSubFromJWT(512, 256);
+  component GETSUB = ExtractSubFromJWT(2048, 256);
 
   GETSUB.jwt <== jwt;
 

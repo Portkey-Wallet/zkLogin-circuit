@@ -6,3 +6,4 @@ tests/compiled-test-circuit
 *.r1cs
 *.wtns
 bls12381/
+bn128/
