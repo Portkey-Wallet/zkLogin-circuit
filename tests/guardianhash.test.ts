@@ -42,52 +42,38 @@ describe("Guardian Hash Test", () => {
     });
 
     it("should main be ok", async function () {
-      // Signature
+
+      const publicKey = "uhWRpJ3PNZaiBmq3P91A6QB0b28LeQvV-HI0TAEcN5nffQPm94w-hY2S6mThb7xXLCGHcP3bhpWl31giZJFlvzHe6db-TsPl8HSLgLIjMbMT8iYWqZPa2eodijEJrkO6SPex5jHLzSwGsoRdSfW8hFeTFQk8xtPXm7GlEEo9mFEKUAaArT9acdE8h53VR7ZkJkipiLCtx0rhySA2W4rEAcinLG3ApG709pOw6sVjA2IAQmZVYrfQ7curmFqKWL_F534kDhQJL2hMdrubhHcqCxetyi_U7WDWDkYCJ_CetjDsI0yfwB2sR01vn6LuDDo6ho8pWJcHOOvXYUnSMFAlew";
+
+      // signature
       const jwtSignature =
-        "NHVaYe26MbtOYhSKkoKYdFVomg4i8ZJd8_-RU8VNbftc4TSMb4bXP3l3YlNWACwyXPGffz5aXHc6lty1Y2t4SWRqGteragsVdZufDn5BlnJl9pdR_kdVFUsra2rWKEofkZeIC4yWytE58sMIihvo9H1ScmmVwBcQP6XETqYd0aSHp1gOa9RdUPDvoXQ5oqygTqVtxaDr6wUFKrKItgBMzWIdNZ6y7O9E0DhEPTbE9rfBo6KTFsHAZnMg4k68CDp2woYIaXbmYTWcvbzIuHO7_37GT79XdIwkm95QJ7hYC9RiwrV7mesbY4PAahERJawntho0my942XheVLmGwLMBkQ";
-      const signatureBigInt = BigInt("0x" + Buffer.from(jwtSignature, "base64").toString("hex"));
-
-      // Public key
-      const publicKeyPem = fs.readFileSync(
-        path.join(__dirname, "./keys/public_key.pem"),
-        "utf8"
+        "JFKnx1lHSiOYq9f_cs-favTCPDAk8WBiQafm_-Gwbm5zneiOkT01act3RWe3iH3UcjhpteW3q0c1CS_YmFEk17zVFNqABIzgljZ2YRB1C1VaPzfzxSF3aSIj-WzOtpk08SJS5QkRspoqkrE3XoT5Fm2sISu__CIcf2CFCSR77LLObEi09OfZkuWFPTK20HnY7t7PheymlBznUK7etxLoR0mUQ3nbvs8ONPYoCCYMvtqqM8l5lq06nUa6zBmANCxBKeRx--Ia-rMjLGVMax1yn4qAx_bGAi4GO0bAkftD71eWt7YdeADsP0ttuj1wDLS14xXtSjbhJCuUyImce0vYpQ";
+      // eslint-disable-next-line prettier/prettier, no-restricted-globals
+      const signatureBigInt = BigInt(
+        "0x" + Buffer.from(jwtSignature, "base64").toString("hex")
       );
-      const pubKeyData = pki.publicKeyFromPem(publicKeyPem.toString());
-      const pubkeyBigInt = BigInt(pubKeyData.n.toString());
 
-      // Read large files and split into smaller chunks
-      const filePaths = [/* Add file paths here */];
-      const chunkSize = 1024 * 1024; // 1 MB
-      const chunks: Buffer[] = [];
-      for (const filePath of filePaths) {
-        const fileBuffer = fs.readFileSync(filePath);
-        chunks.push(...splitBuffer(fileBuffer, chunkSize));
-      }
 
-      // Initialize startTime
+      const pubkeyBigInt = BigInt("0x" + Buffer.from(publicKey, "base64").toString("hex"));
+
+      const data = {
+        jwt: padString(
+          "eyJhbGciOiJSUzI1NiIsImtpZCI6IjkzNGE1ODE2NDY4Yjk1NzAzOTUzZDE0ZTlmMTVkZjVkMDlhNDAxZTQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTAxMTcyMDcxMTQyMjExMTU4NjgiLCJlbWFpbCI6InN0ZXZlbmRlbmc4NkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IjBYRFlzLURESzNKdmR4blY5bnJxcEEiLCJuYW1lIjoiR3VhbmdsZWkgRGVuZyIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLVGZ6OFpPLS1TZGFjdzVMVFhlbVQxNllwTlNsQm9ncFIzSHEzdWJIQ0w9czk2LWMiLCJnaXZlbl9uYW1lIjoiR3VhbmdsZWkiLCJmYW1pbHlfbmFtZSI6IkRlbmciLCJpYXQiOjE3MTIxNDIyMzcsImV4cCI6MTcxMjE0NTgzN30",
+          2048
+        ),
+        signature: toCircomBigIntBytes(signatureBigInt),
+        pubkey: toCircomBigIntBytes(pubkeyBigInt),
+        salt: Array.from(hexToBytes("a677999396dc49a28ad6c9c242719bb3"), (b) => b),
+      };
+
+      console.log(JSON.stringify(data));
       const startTime = new Date().getTime();
-      
-      // Calculate witness for each chunk
-      for (const chunk of chunks) {
-        const witness = await circuit.calculateWitness({
-          jwt: padString(
-            "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0",
-            2048
-          ),
-          signature: toCircomBigIntBytes(signatureBigInt),
-          pubkey: toCircomBigIntBytes(pubkeyBigInt),
-          salt: Array.from(hexToBytes("a677999396dc49a28ad6c9c242719bb3"), (b) => b),
-        });
+      const witness = await circuit.calculateWitness(data);
 
-        // Check constraints for each witness chunk
-        await circuit.checkConstraints(witness);
-      }
-
-      // Sub is "1234567890"
-      const bytes = hexToBytes("7f0bdbbd5bc4c68c21afe63067d39bbc863432cec2c56b9d351cad89346a8b47");
+      const bytes = hexToBytes("2eab4af9ceb2865e42f4ead4d9decc71d4ecb1531f9b7521d1e309c2c2a02246");
 
       // Assert output with complete witness
-      await circuit.assertOut(chunks.join(), {
+      await circuit.assertOut(witness.join(), {
         out: [...bytes],
       });
     });
