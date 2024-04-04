@@ -27,13 +27,13 @@ describe("Guardian Identifier test", function () {
     });
 
     it("should hash correctly", async function () {
-      const sub = hexToBytes("01");
-      const salt = hexToBytes("8a7e44fa4a244e28a65ed89962997c41");
+      const sub = encoder.encode("110117207114221115868");
+      const salt = hexToBytes("a677999396dc49a28ad6c9c242719bb3");
 
       const witness = await circuit.calculateWitness({
         sub: padBytes(sub, 256),
         sub_len: sub.length,
-        salt: padBytes(salt, 32),
+        salt: padBytes(salt, 16),
         salt_len: salt.length
       });
 
@@ -41,7 +41,7 @@ describe("Guardian Identifier test", function () {
       await circuit.assertOut(witness, {
         out: [
           ...hexToBytes(
-            "ac379499210dc4af65b537bd5deed7033d664cb2b55965105e8ad68fadb13456"
+            "2eab4af9ceb2865e42f4ead4d9decc71d4ecb1531f9b7521d1e309c2c2a02246"
           ),
         ],
       });
@@ -54,7 +54,7 @@ describe("Guardian Identifier test", function () {
       const witness = await circuit.calculateWitness({
         sub: padBytes(sub, 256),
         sub_len: sub.length,
-        salt: padBytes(salt, 32),
+        salt: padBytes(salt, 16),
         salt_len: salt.length
       });
 
@@ -79,7 +79,7 @@ describe("Guardian Identifier test", function () {
         const witness = await circuit.calculateWitness({
           sub: padBytes(sub, 256),
           sub_len: sub.length,
-          salt: padBytes(salt, 32),
+          salt: padBytes(salt, 16),
           salt_len: salt.length
         });
         console.log('id', id);
