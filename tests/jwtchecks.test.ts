@@ -52,10 +52,11 @@ describe("JWT Checks Test", () => {
       const witness = await circuit.calculateWitness(data);
 
       await circuit.checkConstraints(witness);
-      console.log(witness)
+      const claim_name = ',"sub"';
+      const claim_value = '"110117207114221115868"';
       await circuit.assertOut(witness, {
-        claim_name: ',"sub"',
-        claim_value: '"110117207114221115868"'
+        claim_name: padString(claim_name, claim_name.length),
+        claim_value: padString(claim_value, claim_value.length)
       });
     });
   });
