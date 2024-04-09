@@ -64,16 +64,26 @@ describe("Guardian Hash Test", () => {
         signature: toCircomBigIntBytes(signatureBigInt),
         pubkey: toCircomBigIntBytes(pubkeyBigInt),
         salt: Array.from(hexToBytes("a677999396dc49a28ad6c9c242719bb3"), (b) => b),
+        payload_start_index: 103,
+        sub_claim: padString(
+          '"sub":"110117207114221115868",',
+          41
+        ), 
+        sub_claim_length: 30,
+        sub_index_b64: 103 + 265,
+        sub_length_b64: 42,
+        sub_name_length: 5,
+        sub_colon_index: 5,
+        sub_value_index: 6,
+        sub_value_length: 23,
       };
 
-      console.log(JSON.stringify(data));
-      const startTime = new Date().getTime();
       const witness = await circuit.calculateWitness(data);
 
       const bytes = hexToBytes("2eab4af9ceb2865e42f4ead4d9decc71d4ecb1531f9b7521d1e309c2c2a02246");
 
       // Assert output with complete witness
-      await circuit.assertOut(witness.join(), {
+      await circuit.assertOut(witness, {
         out: [...bytes],
       });
     });
