@@ -43,11 +43,11 @@ describe("Guardian Hash Test", () => {
 
     it("should main be ok", async function () {
 
-      const publicKey = "uhWRpJ3PNZaiBmq3P91A6QB0b28LeQvV-HI0TAEcN5nffQPm94w-hY2S6mThb7xXLCGHcP3bhpWl31giZJFlvzHe6db-TsPl8HSLgLIjMbMT8iYWqZPa2eodijEJrkO6SPex5jHLzSwGsoRdSfW8hFeTFQk8xtPXm7GlEEo9mFEKUAaArT9acdE8h53VR7ZkJkipiLCtx0rhySA2W4rEAcinLG3ApG709pOw6sVjA2IAQmZVYrfQ7curmFqKWL_F534kDhQJL2hMdrubhHcqCxetyi_U7WDWDkYCJ_CetjDsI0yfwB2sR01vn6LuDDo6ho8pWJcHOOvXYUnSMFAlew";
+      const publicKey = "xjWd1j8GmmWzuz732haG9HECXsSZBvxOBLph3FQhk_tplhWloI1ywx-RdopUZt1lndbOM9n99lZJkpQyNJ1sdy7JFgYLjqj-wtHdEaQlBGEQtmkW8zUjr_N3bmpsxGbPzOzlKe3qddtoxXvn9rI_RvHfJD1YY-6kayQeyPOBz_4ML1lvI_JHV-Bb1MSmSk3WaAh5PzeqleusmUT87Gqfu02cOPrY8cwugqo65D6-wzAEeVvceV8-c36TMoLU5csU05GBVplgd6Ouuw35ZsETG4si4QQJztC3KsZ4jhYM-aJ3jeFPt0r3cQooiXdZBp3JkXSpE-UUaOVPsXo7WiVmww==";
 
       // signature
       const jwtSignature =
-        "JFKnx1lHSiOYq9f_cs-favTCPDAk8WBiQafm_-Gwbm5zneiOkT01act3RWe3iH3UcjhpteW3q0c1CS_YmFEk17zVFNqABIzgljZ2YRB1C1VaPzfzxSF3aSIj-WzOtpk08SJS5QkRspoqkrE3XoT5Fm2sISu__CIcf2CFCSR77LLObEi09OfZkuWFPTK20HnY7t7PheymlBznUK7etxLoR0mUQ3nbvs8ONPYoCCYMvtqqM8l5lq06nUa6zBmANCxBKeRx--Ia-rMjLGVMax1yn4qAx_bGAi4GO0bAkftD71eWt7YdeADsP0ttuj1wDLS14xXtSjbhJCuUyImce0vYpQ";
+        "po6LchPr082VpjJjVliw6wItx32nBRh5a-w0T_6oQGz2N7MixGdvIeQ9gdOiyLOKPpz3NCR9oTf1V17Oxv1fgIgOP3wHThCEBToUbquAMKQjzUcujSsv3b2f0O3i28NwVBvtAYefdpvgxMEZot-S_US-2U9fBlI1ubkeLSOr4G_tLVPtR0iwfLLirW5NxR96oEp3BZ2BtSlDqLGlGXXFtNb4_Mvg40wzR4FT-RMb39zKlW0me7bcCZAwjuYEREptdYsUrHyDf72Q18NK2hBs6baNiBriNPwpHA5EyteH26SqaKYjaJGnEHPmSR4QrdwQX_LpvRlgETm_v6ZQw1t-Og";
       // eslint-disable-next-line prettier/prettier, no-restricted-globals
       const signatureBigInt = BigInt(
         "0x" + Buffer.from(jwtSignature, "base64").toString("hex")
@@ -58,7 +58,7 @@ describe("Guardian Hash Test", () => {
 
       const data = {
         jwt: padString(
-          "eyJhbGciOiJSUzI1NiIsImtpZCI6IjkzNGE1ODE2NDY4Yjk1NzAzOTUzZDE0ZTlmMTVkZjVkMDlhNDAxZTQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTAxMTcyMDcxMTQyMjExMTU4NjgiLCJlbWFpbCI6InN0ZXZlbmRlbmc4NkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IjBYRFlzLURESzNKdmR4blY5bnJxcEEiLCJuYW1lIjoiR3VhbmdsZWkgRGVuZyIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLVGZ6OFpPLS1TZGFjdzVMVFhlbVQxNllwTlNsQm9ncFIzSHEzdWJIQ0w9czk2LWMiLCJnaXZlbl9uYW1lIjoiR3VhbmdsZWkiLCJmYW1pbHlfbmFtZSI6IkRlbmciLCJpYXQiOjE3MTIxNDIyMzcsImV4cCI6MTcxMjE0NTgzN30",
+          "eyJhbGciOiJSUzI1NiIsImtpZCI6IjMyM2IyMTRhZTY5NzVhMGYwMzRlYTc3MzU0ZGMwYzI1ZDAzNjQyZGMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTAxMTcyMDcxMTQyMjExMTU4NjgiLCJhdF9oYXNoIjoic2hUS2RwcWpOU3RNc3IzTDE4Z285ZyIsIm5vbmNlIjoiNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MiIsImlhdCI6MTcxNjQ0OTgzNSwiZXhwIjoxNzE2NDUzNDM1fQ",
           2048
         ),
         signature: toCircomBigIntBytes(signatureBigInt),
@@ -69,13 +69,13 @@ describe("Guardian Hash Test", () => {
           '"sub":"110117207114221115868",',
           41
         ), 
-        sub_claim_length: 30,
-        sub_index_b64: 103 + 265,
-        sub_length_b64: 42,
-        sub_name_length: 5,
-        sub_colon_index: 5,
-        sub_value_index: 6,
-        sub_value_length: 23,
+        'sub_claim_length': 30,
+        'sub_index_b64': 103 + 265,
+        'sub_length_b64': 40,
+        'sub_name_length': 5,
+        'sub_colon_index': 5,
+        'sub_value_index': 6,
+        'sub_value_length': 23
       };
 
       const witness = await circuit.calculateWitness(data);
