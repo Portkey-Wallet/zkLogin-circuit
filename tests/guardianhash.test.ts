@@ -59,7 +59,7 @@ describe("Guardian Hash Test", () => {
       const data = {
         jwt: padString(
           "eyJhbGciOiJSUzI1NiIsImtpZCI6IjMyM2IyMTRhZTY5NzVhMGYwMzRlYTc3MzU0ZGMwYzI1ZDAzNjQyZGMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTAxMTcyMDcxMTQyMjExMTU4NjgiLCJhdF9oYXNoIjoic2hUS2RwcWpOU3RNc3IzTDE4Z285ZyIsIm5vbmNlIjoiNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MiIsImlhdCI6MTcxNjQ0OTgzNSwiZXhwIjoxNzE2NDUzNDM1fQ",
-          2048
+          1024
         ),
         signature: toCircomBigIntBytes(signatureBigInt),
         pubkey: toCircomBigIntBytes(pubkeyBigInt),
@@ -69,13 +69,13 @@ describe("Guardian Hash Test", () => {
           '"sub":"110117207114221115868",',
           41
         ), 
-        'sub_claim_length': 30,
-        'sub_index_b64': 103 + 265,
-        'sub_length_b64': 40,
-        'sub_name_length': 5,
-        'sub_colon_index': 5,
-        'sub_value_index': 6,
-        'sub_value_length': 23
+        sub_claim_length: 30,
+        sub_index_b64: 103 + 265,
+        sub_length_b64: 40,
+        sub_name_length: 5,
+        sub_colon_index: 5,
+        sub_value_index: 6,
+        sub_value_length: 23
       };
 
       const witness = await circuit.calculateWitness(data);

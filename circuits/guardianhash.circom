@@ -6,7 +6,7 @@ include "./helpers/jwt-sub-extract.circom";
 include "./helpers/jwtchecks.circom";
 
 template GuardianHash(){
-  var maxJwtLen = 2048;
+  var maxJwtLen = 1024;
   var maxSubLen = 32; // Suport sub of length 32 first
   var maxSubNameLen = 5;
   var maxSubValueLen = maxSubLen + 2; // 2 for double quotes
