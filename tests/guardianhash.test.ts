@@ -86,7 +86,18 @@ describe("Guardian Hash Test", () => {
         exp_name_length: 5,
         exp_colon_index: 5,
         exp_value_index: 6,
-        exp_value_length: 10
+        exp_value_length: 10,
+        nonce_claim: padString(
+          '"nonce":"4242424242424242424242424242424242424242424242424242424242424242",',
+          77
+        ),
+        nonce_claim_length: 75,
+        nonce_index_b64: 103 + 352,
+        nonce_length_b64: 101,
+        nonce_name_length: 7,
+        nonce_colon_index: 7,
+        nonce_value_index: 8,
+        nonce_value_length: 66,
       };
 
       const witness = await circuit.calculateWitness(data);
@@ -96,7 +107,8 @@ describe("Guardian Hash Test", () => {
       // Assert output with complete witness
       await circuit.assertOut(witness, {
         out: [...bytes],
-        exp_value: padString('1716453435', 10)
+        exp_value: padString('1716453435', 10),
+        nonce: padString('4242424242424242424242424242424242424242424242424242424242424242', 64),
       });
     });
   });

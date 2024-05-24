@@ -18,10 +18,11 @@ template GuardianHash(){
   var maxExpValueLen = maxExpLen;
   var maxExpClaimLen = maxExpNameLen + maxExpValueLen + maxWhiteSpaceLen; // TODO: Check if this calculation is correct
 
-  var maxNonceLen = 32;
+  var maxNonceLen = 64;
   var maxNonceNameLen = 7;
   var maxNonceValueLen = maxNonceLen + 2; // 2 for double quotes
-  var maxNonceClaimLen = maxNonceNameLen + maxNonceValueLen + maxWhiteSpaceLen; // TODO: Check if this calculation is correct
+  var colonAndCommaLen = 2;
+  var maxNonceClaimLen = maxNonceNameLen + maxNonceValueLen + maxWhiteSpaceLen + colonAndCommaLen; // TODO: Check if this calculation is correct
 
   signal input jwt[maxJwtLen];
   signal input signature[17];
@@ -46,16 +47,14 @@ template GuardianHash(){
   signal input exp_value_index;
   signal input exp_value_length;
 
-  /**
-   *  'exp_claim': '"exp":1716453435}',
- 'exp_claim_length': 17,
- 'exp_index_b64': 474,
- 'exp_length_b64': 23,
- 'exp_name_length': 5,
- 'exp_colon_index': 5,
- 'exp_value_index': 6,
- 'exp_value_length': 10
-   */
+  signal input nonce_claim[maxNonceClaimLen];
+  signal input nonce_claim_length;
+  signal input nonce_index_b64;
+  signal input nonce_length_b64;
+  signal input nonce_name_length; // with quotes
+  signal input nonce_colon_index;
+  signal input nonce_value_index;
+  signal input nonce_value_length;
 
   signal output out[32];
 
@@ -82,9 +81,31 @@ template GuardianHash(){
   expExtClaimOps.claim_name === [34, 101, 120, 112, 34]; // '"exp"'
   exp_value <== expExtClaimOps.claim_value;
 
-  // signal output exp[maxExpLen] <== QuoteRemover(maxExpValueLen)(
-  //     exp_value, exp_value_length
-  // );
+
+  // Extract nonce claim
+
+  signal output nonce_value_with_quotes[maxNonceValueLen];
+  component nonceExtClaimOps = ExtClaimOps(maxJwtLen, maxNonceClaimLen, maxNonceNameLen, maxNonceValueLen, maxWhiteSpaceLen);
+  nonceExtClaimOps.content <== jwt;
+  nonceExtClaimOps.index_b64 <== nonce_index_b64;
+  nonceExtClaimOps.length_b64 <== nonce_length_b64;
+
+  nonceExtClaimOps.ext_claim <== nonce_claim;
+  nonceExtClaimOps.ext_claim_length <== nonce_claim_length;
+  nonceExtClaimOps.name_length <== nonce_name_length; // with quotes
+  nonceExtClaimOps.colon_index <== nonce_colon_index;
+  nonceExtClaimOps.value_index <== nonce_value_index;
+  nonceExtClaimOps.value_length <== nonce_value_length; // with quotes
+  nonceExtClaimOps.payload_start_index <== payload_start_index;
+
+
+  nonceExtClaimOps.claim_name === [34, 110, 111, 110, 99, 101, 34]; // '"nonce"'
+  nonce_value_with_quotes <== nonceExtClaimOps.claim_value;
+
+
+  signal output nonce[maxNonceLen] <== QuoteRemover(maxNonceValueLen)(
+      nonce_value_with_quotes, nonce_value_length
+  );
 
 
 
