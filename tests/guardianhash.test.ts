@@ -75,7 +75,18 @@ describe("Guardian Hash Test", () => {
         sub_name_length: 5,
         sub_colon_index: 5,
         sub_value_index: 6,
-        sub_value_length: 23
+        sub_value_length: 23,
+        exp_claim: padString(
+          '"exp":1716453435}', 
+          17
+        ),
+        exp_claim_length: 17,
+        exp_index_b64: 103 + 474,
+        exp_length_b64: 24,
+        exp_name_length: 5,
+        exp_colon_index: 5,
+        exp_value_index: 6,
+        exp_value_length: 10
       };
 
       const witness = await circuit.calculateWitness(data);
@@ -85,6 +96,7 @@ describe("Guardian Hash Test", () => {
       // Assert output with complete witness
       await circuit.assertOut(witness, {
         out: [...bytes],
+        exp_value: padString('1716453435', 10)
       });
     });
   });
