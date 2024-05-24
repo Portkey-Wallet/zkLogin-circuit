@@ -43,9 +43,9 @@ def extract_claims(payload):
 
 
 def to_b64_index(ind):
-    # 1st byte: 6 bits go into 1st byte, 2 bits go into 2nd byte
-    # 2nd byte: 4 bits go into 2nd byte, 4 bits go into 3rd byte
-    # 3rd byte: 2 bits go into 3rd byte, 6 bits go into 4th byte
+    # 1st byte: 6 bits go into 1st byte, 2 bits go into 2nd byte, OFFSET 0
+    # 2nd byte: 4 bits go into 2nd byte, 4 bits go into 3rd byte, OFFSET 2
+    # 3rd byte: 2 bits go into 3rd byte, 6 bits go into 4th byte, OFFSET 4
     whole, remainder = ind // 3, ind % 3
     return whole * 4 + remainder
 
@@ -62,8 +62,7 @@ def prepare_claim_args(payload, name):
     claim = claims[name]
     index_in_payload = payload.index(claim)
     index_b64 = to_b64_index(index_in_payload)
-    end_64 = to_b64_index(index_in_payload + len(claim))
-    colon_index = claim.index(':')
+    end_64 = to_b64_index(index_in_payload + len(claim) + 1)
     claim_name, claim_value = claim.split(':')
     claim_name = clean_value(claim_name)
     claim_value = clean_value(claim_value)
@@ -96,4 +95,4 @@ def parse_jwt(jwt):
 jwt = "<your-test-jwt>"
 
 
-parse_jwt(jwt)
+print(parse_jwt(jwt))
