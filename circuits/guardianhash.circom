@@ -56,14 +56,14 @@ template GuardianHash(){
   signal input nonce_value_index;
   signal input nonce_value_length;
 
-  signal output out[32];
+  signal output id_hash[32];
 
   component VERIFYJWT = JWTVerify(maxJwtLen, 121, 17);
   component HASH = GuardianIdentifierHash(maxSubLen, 16);
 
   // Extract exp claim
 
-  signal output exp_value[maxExpValueLen];
+  signal output exp[maxExpValueLen];
   component expExtClaimOps = ExtClaimOps(maxJwtLen, maxExpClaimLen, maxExpNameLen, maxExpValueLen, maxWhiteSpaceLen);
   expExtClaimOps.content <== jwt;
   expExtClaimOps.index_b64 <== exp_index_b64;
@@ -79,7 +79,7 @@ template GuardianHash(){
 
 
   expExtClaimOps.claim_name === [34, 101, 120, 112, 34]; // '"exp"'
-  exp_value <== expExtClaimOps.claim_value;
+  exp <== expExtClaimOps.claim_value;
 
 
   // Extract nonce claim
@@ -144,7 +144,7 @@ template GuardianHash(){
   HASH.salt <== salt;
   HASH.salt_len <== 16;
 
-  out <== HASH.out;
+  id_hash <== HASH.out;
 }
 
 component main {public [pubkey, salt]} = GuardianHash();

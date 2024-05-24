@@ -106,8 +106,8 @@ describe("Guardian Hash Test", () => {
 
       // Assert output with complete witness
       await circuit.assertOut(witness, {
-        out: [...bytes],
-        exp_value: padString('1716453435', 10),
+        id_hash: [...bytes],
+        exp: padString('1716453435', 10),
         nonce: padString('4242424242424242424242424242424242424242424242424242424242424242', 64),
       });
     });
