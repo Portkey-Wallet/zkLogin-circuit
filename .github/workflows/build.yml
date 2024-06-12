@@ -45,7 +45,7 @@ jobs:
 
       - name: Compile circuit
         run: |
-          mkdir out
+          mkdir -0 out
           circom circuits/guardianhash.circom --r1cs --sym --json --wasm --c -l node_modules -o out
 
       - name: Build binary
@@ -55,7 +55,7 @@ jobs:
 
       - name: Zip artifacts
         run: |
-          mkdir zipfiles
+          mkdir -p zipfiles
           zip -j -r zipfiles/guardianhash-${{ env.VERSION }}.zip \
           out/guardianhash_js/guardianhash.wasm \
           out/guardianhash_cpp/guardianhash \
@@ -113,7 +113,7 @@ jobs:
 
       - name: Ceremony - Zip files
         run: |
-          mkdir zipfiles
+          mkdir -p zipfiles
           zip -j -r zipfiles/keys-${{ env.VERSION }}.zip \
           out/guardianhash_0001.zkey \
           out/verification_key.json
