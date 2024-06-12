@@ -1,13 +1,13 @@
 name: Build
 on:
   push:
-    branches:
-      - main
     tags:
       - 'v*'
 
 jobs:
-  build-artifacts:
+  build:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     container:
       image: debian:bookworm
@@ -17,6 +17,12 @@ jobs:
         run: |
           apt-get update
           apt-get install -y nlohmann-json3-dev libgmp-dev nasm build-essential zip
+
+      - name: Prepare VERSION
+        run: |
+          echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        env:
+          GITHUB_REF: ${{ github.ref }}
 
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -50,7 +56,7 @@ jobs:
       - name: Zip artifacts
         run: |
           mkdir zipfiles
-          zip -r zipfiles/guardianhash-${{ github.sha }}.zip \
+          zip -j -r zipfiles/guardianhash-${{ env.VERSION }}.zip \
           out/guardianhash_js/guardianhash.wasm \
           out/guardianhash_cpp/guardianhash \
           out/guardianhash_cpp/guardianhash.dat \
@@ -58,8 +64,10 @@ jobs:
           out/guardianhash.sym \
           out/guardianhash_constraints.json
 
-      - name: Upload zip
-        uses: actions/upload-artifact@v4
+      - name: Upload zips to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: guardianhash-${{ github.sha }}.zip
-          path: zipfiles/guardianhash-${{ github.sha }}.zip
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: zipfiles/guardianhash-${{ env.VERSION }}.zip
+          asset_name: guardianhash-${{ env.VERSION }}.zip
+          tag: ${{ github.ref }}
