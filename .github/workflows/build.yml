@@ -108,7 +108,7 @@ jobs:
         run: |
           cd out
           npx snarkjs groth16 setup guardianhash.r1cs ppot_0080_21.ptau guardianhash_0000.zkey
-          npx snarkjs zkey contribute guardianhash_0000.zkey guardianhash_0001.Ceremony --name="1st Contributor Name" -v -e="Some random text"
+          npx snarkjs zkey contribute guardianhash_0000.zkey guardianhash_0001.zkey --name="1st Contributor Name" -v -e="Some random text"
           npx snarkjs zkey export verificationkey guardianhash_0001.zkey verification_key.json
 
       - name: Ceremony - Zip files
