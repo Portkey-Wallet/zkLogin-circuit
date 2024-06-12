@@ -14,6 +14,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Set NODE_OPTIONS
+        run: echo "NODE_OPTIONS=--max-old-space-size=1024" >> $GITHUB_ENV
+
       - name: Download circom
         uses: supplypike/setup-bin@v4
         with:
