@@ -4,6 +4,7 @@ import { pki } from "node-forge";
 import { wasm as wasm_tester } from "circom_tester";
 import { describe, beforeAll, it } from "vitest";
 import { hexToBytes, padString, toCircomBigIntBytes } from "../utils";
+import { loadSymbolsWorkaround } from "../utils/workarounds";
 
 // Function to split large files into smaller chunks
 const splitFile = (filePaths: string[], chunkSize: number): Buffer[] => {
@@ -39,6 +40,7 @@ describe("Guardian Hash Test", () => {
           include: path.join(__dirname, "../node_modules"),
         }
       );
+      loadSymbolsWorkaround(circuit);
     });
 
     it("should main be ok", async function () {
