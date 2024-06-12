@@ -84,7 +84,7 @@ jobs:
       - name: Install deps
         run: |
           apt-get update
-          apt-get install -y nlohmann-json3-dev libgmp-dev nasm
+          apt-get install -y nlohmann-json3-dev libgmp-dev nasm build-essential
 
       - name: Build executable
         run: make
