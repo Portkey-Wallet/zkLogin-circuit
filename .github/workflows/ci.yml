@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download circom
+        uses: supplypike/setup-bin@v4
+        with:
+          uri: "https://github.com/iden3/circom/releases/latest/download/circom-linux-amd64"
+          name: "circom"
+          version: "latest"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install node_modules
+        run: npm install
+
+  test:
+    needs: [setup]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test the main circuit
+        uses: npm run test tests/guardianhash.test.ts
+
+  build:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Compile circuit
+        run: |
+          mkdir out
+          circom circuits/guardianhash.circom --r1cs --sym --json --wasm --c -l node_modules -o out
+
+      - name: Upload guardianhash_js
+        uses: actions/upload-artifact@v4
+        with:
+          name: guardianhash_js
+          path: out/guardianhash_js
+
+      - name: Upload guardianhash_wasm
+        uses: actions/upload-artifact@v4
+        with:
+          name: guardianhash_wasm
+          path: out/guardianhash_js/guardianhash.wasm
+
+      - name: Upload guardianhash_cpp
+        uses: actions/upload-artifact@v4
+        with:
+          name: guardianhash_cpp
+          path: out/guardianhash_cpp
+
+      - name: Upload r1cs
+        uses: actions/upload-artifact@v4
+        with:
+          name: r1cs
+          path: out/guardianhash.r1cs
+
+      - name: Upload sym
+        uses: actions/upload-artifact@v4
+        with:
+          name: sym
+          path: out/guardianhash.sym
+
+      - name: Upload json
+        uses: actions/upload-artifact@v4
+        with:
+          name: json
+          path: out/guardianhash_constraints.json
