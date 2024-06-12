@@ -9,6 +9,9 @@ on:
 jobs:
   build-artifacts:
     runs-on: ubuntu-latest
+    container:
+      image: debian:bookworm
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
