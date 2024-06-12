@@ -13,7 +13,20 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+      - name: Print working directory
+        run: pwd
 
+      - name: List all files and directories here
+        run: ls -la
+
+      - name: Check for hidden files
+        run: ls -la ./
+
+      - name: Show git status
+        run: git status
+
+      - name: Show last commit
+        run: git log -1
       - name: Download circom
         uses: supplypike/setup-bin@v4
         with:
