@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test the main circuit
-        uses: npm run test tests/guardianhash.test.ts
+        run: npm run test tests/guardianhash.test.ts
 
   build:
     needs: [test]
