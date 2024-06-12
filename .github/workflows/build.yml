@@ -9,8 +9,15 @@ on:
 jobs:
   build-artifacts:
     runs-on: ubuntu-latest
+    container:
+      image: debian:bookworm
 
     steps:
+      - name: Install deps
+        run: |
+          apt-get update
+          apt-get install -y nlohmann-json3-dev libgmp-dev nasm build-essential
+
       - name: Checkout repo
         uses: actions/checkout@v4
 
@@ -35,68 +42,24 @@ jobs:
           mkdir out
           circom circuits/guardianhash.circom --r1cs --sym --json --wasm --c -l node_modules -o out
 
-      - name: Upload guardianhash_js
-        uses: actions/upload-artifact@v4
-        with:
-          name: guardianhash_js
-          path: out/guardianhash_js
-
-      - name: Upload guardianhash_wasm
-        uses: actions/upload-artifact@v4
-        with:
-          name: guardianhash_wasm
-          path: out/guardianhash_js/guardianhash.wasm
-
-      - name: Upload guardianhash_cpp
-        uses: actions/upload-artifact@v4
-        with:
-          name: guardianhash_cpp
-          path: out/guardianhash_cpp
-
-      - name: Upload r1cs
-        uses: actions/upload-artifact@v4
-        with:
-          name: r1cs
-          path: out/guardianhash.r1cs
-
-      - name: Upload sym
-        uses: actions/upload-artifact@v4
-        with:
-          name: sym
-          path: out/guardianhash.sym
-
-      - name: Upload json
-        uses: actions/upload-artifact@v4
-        with:
-          name: json
-          path: out/guardianhash_constraints.json
-
-  build-binary:
-    needs: [build-artifacts]
-    runs-on: ubuntu-latest
-    container:
-      image: debian:bookworm
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: guardianhash_cpp
-
-      - name: Install deps
+      - name: Build binary
         run: |
-          apt-get update
-          apt-get install -y nlohmann-json3-dev libgmp-dev nasm build-essential
+          cd guardianhash_cpp
+          make
 
-      - name: Build executable
-        run: make
+      - name: Zip artifact
+        run: |
+          mkdir zipfiles
+          zip -r zipfiles/guardianhash-${{ github.sha }}.zip \
+          out/guardianhash_js/guardianhash.wasm \
+          out/guardianhash_cpp/guardianhash \
+          out/guardianhash_cpp/guardianhash.dat \
+          out/guardianhash.r1cs \
+          out/guardianhash.sym \
+          out/guardianhash_constraints.json
 
-      - name: Upload executable
+      - name: Upload zip
         uses: actions/upload-artifact@v4
         with:
-          name: executable
-          path: guardianhash
-
-      - name: Upload dat
-        uses: actions/upload-artifact@v4
-        with:
-          name: dat
-          path: guardianhash.dat
+          name: guardianhash-${{ github.sha }}.zip
+          path: zipfiles/guardianhash-${{ github.sha }}.zip
