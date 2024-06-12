@@ -45,7 +45,7 @@ jobs:
 
       - name: Compile circuit
         run: |
-          mkdir -0 out
+          mkdir -p out
           circom circuits/guardianhash.circom --r1cs --sym --json --wasm --c -l node_modules -o out
 
       - name: Build binary
