@@ -82,7 +82,9 @@ jobs:
           name: guardianhash_cpp
 
       - name: Install deps
-        run: apt-get install -y nlohmann-json3-dev libgmp-dev nasm
+        run: |
+          apt-get update
+          apt-get install -y nlohmann-json3-dev libgmp-dev nasm
 
       - name: Build executable
         run: make
