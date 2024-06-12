@@ -34,6 +34,8 @@ jobs:
     needs: [setup]
     runs-on: ubuntu-latest
     steps:
+      - name: list direcotory
+        run: ls -la
       - name: Test the main circuit
         run: npm run test tests/guardianhash.test.ts
 
