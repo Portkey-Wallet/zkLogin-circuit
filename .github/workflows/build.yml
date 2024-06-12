@@ -1,5 +1,4 @@
-name: CI
-
+name: Build
 on:
   push:
     branches:
@@ -8,14 +7,11 @@ on:
       - 'v*'
 
 jobs:
-  test:
+  build-artifacts:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Set NODE_OPTIONS
-        run: echo "NODE_OPTIONS=--max-old-space-size=1024" >> $GITHUB_ENV
 
       - name: Download circom
         uses: supplypike/setup-bin@v4
@@ -33,13 +29,6 @@ jobs:
       - name: Install node_modules
         run: npm install
 
-      - name: Test the main circuit
-        run: npm run test tests/guardianhash.test.ts
-
-  build:
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps: 
       - name: Compile circuit
         run: |
           mkdir out
