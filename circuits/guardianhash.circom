@@ -148,3 +148,5 @@ template GuardianHash(){
 }
 
 component main {public [pubkey, salt]} = GuardianHash();
+// TODO: make nonce the public input
+// TODO: maybe exp is not needed
