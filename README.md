@@ -1,4 +1,6 @@
-# example-circuit
+# Zk Jwt Auth Circuit
+
+[![Test](https://github.com/Portkey-Wallet/zkJwtAuth-circuit/actions/workflows/test.yml/badge.svg)](https://github.com/Portkey-Wallet/zkJwtAuth-circuit/actions/workflows/test.yml)
 
 ## Install
 
