@@ -75,9 +75,9 @@ jobs:
       - name: Ceremony - Count number of constraints
         id: count_lines
         run: |
-          LINE_COUNT=$(wc -l < out/guardianhash_constraints.json)
-          ADJUSTED_COUNT=$((LINE_COUNT - ${{ env.ADJUSTED_COUNT }}))
-          echo "ADJUSTED_COUNT=$ADJUSTED_COUNT" >> $GITHUB_ENV
+          raw_result=$(npx snarkjs ri out/guardianhash.r1cs | grep '# of Constraints:')
+          constraints_count=$(echo $raw_result | sed 's/.*Constraints: //' | sed 's/[^0-9]*//g')
+          echo "ADJUSTED_COUNT=$constraints_count" >> $GITHUB_ENV
 
       - name: Ceremony - Find least power of 2 larger than number of constraints
         id: power_of_2
