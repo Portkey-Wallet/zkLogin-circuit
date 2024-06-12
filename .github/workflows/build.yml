@@ -44,7 +44,7 @@ jobs:
 
       - name: Build binary
         run: |
-          cd guardianhash_cpp
+          cd out/guardianhash_cpp
           make
 
       - name: Zip artifact
