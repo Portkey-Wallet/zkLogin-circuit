@@ -5,7 +5,7 @@ include "./helpers/base64.circom";
 include "./helpers/jwt-sub-extract.circom";
 include "./helpers/jwtchecks.circom";
 
-template GuardianHash(){
+template ZkJwtAuth(){
   var maxJwtLen = 1024;
   var maxSubLen = 32; // Suport sub of length 32 first
   var maxSubNameLen = 5;
@@ -152,4 +152,4 @@ template GuardianHash(){
   id_hash <== HASH.out;
 }
 
-component main {public [pubkey, salt]} = GuardianHash();
+component main {public [pubkey, salt]} = ZkJwtAuth();

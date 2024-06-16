@@ -33,7 +33,7 @@ describe("Guardian Hash Test", () => {
   describe("Guardian Hash Test", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "../circuits/guardianhash.circom"),
+        path.join(__dirname, "../circuits/zkJwtAuth.circom"),
         {
           recompile: true,
           output: path.join(__dirname, "./compiled-test-circuit"),
