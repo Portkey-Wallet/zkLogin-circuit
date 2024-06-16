@@ -38,6 +38,8 @@ template GuardianHash(){
   signal input sub_value_index;
   signal input sub_value_length; // with quotes
 
+
+  /* exp not needed for now
   signal input exp_claim[maxExpClaimLen];
   signal input exp_claim_length;
   signal input exp_index_b64;
@@ -46,6 +48,7 @@ template GuardianHash(){
   signal input exp_colon_index;
   signal input exp_value_index;
   signal input exp_value_length;
+  */
 
   signal input nonce_claim[maxNonceClaimLen];
   signal input nonce_claim_length;
@@ -63,6 +66,7 @@ template GuardianHash(){
 
   // Extract exp claim
 
+  /* exp not needed for now
   signal output exp[maxExpValueLen];
   component expExtClaimOps = ExtClaimOps(maxJwtLen, maxExpClaimLen, maxExpNameLen, maxExpValueLen, maxWhiteSpaceLen);
   expExtClaimOps.content <== jwt;
@@ -80,11 +84,12 @@ template GuardianHash(){
 
   expExtClaimOps.claim_name === [34, 101, 120, 112, 34]; // '"exp"'
   exp <== expExtClaimOps.claim_value;
+  */
 
 
   // Extract nonce claim
 
-  signal output nonce_value_with_quotes[maxNonceValueLen];
+  signal nonce_value_with_quotes[maxNonceValueLen];
   component nonceExtClaimOps = ExtClaimOps(maxJwtLen, maxNonceClaimLen, maxNonceNameLen, maxNonceValueLen, maxWhiteSpaceLen);
   nonceExtClaimOps.content <== jwt;
   nonceExtClaimOps.index_b64 <== nonce_index_b64;
@@ -148,5 +153,3 @@ template GuardianHash(){
 }
 
 component main {public [pubkey, salt]} = GuardianHash();
-// TODO: make nonce the public input
-// TODO: maybe exp is not needed

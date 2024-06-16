@@ -78,17 +78,6 @@ describe("Guardian Hash Test", () => {
         sub_colon_index: 5,
         sub_value_index: 6,
         sub_value_length: 23,
-        exp_claim: padString(
-          '"exp":1716453435}', 
-          17
-        ),
-        exp_claim_length: 17,
-        exp_index_b64: 103 + 474,
-        exp_length_b64: 24,
-        exp_name_length: 5,
-        exp_colon_index: 5,
-        exp_value_index: 6,
-        exp_value_length: 10,
         nonce_claim: padString(
           '"nonce":"4242424242424242424242424242424242424242424242424242424242424242",',
           77
@@ -109,7 +98,6 @@ describe("Guardian Hash Test", () => {
       // Assert output with complete witness
       await circuit.assertOut(witness, {
         id_hash: [...bytes],
-        exp: padString('1716453435', 10),
         nonce: padString('4242424242424242424242424242424242424242424242424242424242424242', 64),
       });
     });
