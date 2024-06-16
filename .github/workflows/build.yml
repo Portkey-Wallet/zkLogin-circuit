@@ -46,36 +46,36 @@ jobs:
       - name: Compile circuit
         run: |
           mkdir -p out
-          circom circuits/guardianhash.circom --r1cs --sym --json --wasm --c -l node_modules -o out
+          circom circuits/zkJwtAuth.circom --r1cs --sym --json --wasm --c -l node_modules -o out
 
       - name: Build binary
         run: |
-          cd out/guardianhash_cpp
+          cd out/zkJwtAuth_cpp
           make
 
       - name: Zip artifacts
         run: |
           mkdir -p zipfiles
-          zip -j -r zipfiles/guardianhash-${{ env.VERSION }}.zip \
-          out/guardianhash_js/guardianhash.wasm \
-          out/guardianhash_cpp/guardianhash \
-          out/guardianhash_cpp/guardianhash.dat \
-          out/guardianhash.r1cs \
-          out/guardianhash.sym \
-          out/guardianhash_constraints.json
+          zip -j -r zipfiles/zkJwtAuth-${{ env.VERSION }}.zip \
+          out/zkJwtAuth_js/zkJwtAuth.wasm \
+          out/zkJwtAuth_cpp/zkJwtAuth \
+          out/zkJwtAuth_cpp/zkJwtAuth.dat \
+          out/zkJwtAuth.r1cs \
+          out/zkJwtAuth.sym \
+          out/zkJwtAuth_constraints.json
 
       - name: Upload zips to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: zipfiles/guardianhash-${{ env.VERSION }}.zip
-          asset_name: guardianhash-${{ env.VERSION }}.zip
+          file: zipfiles/zkJwtAuth-${{ env.VERSION }}.zip
+          asset_name: zkJwtAuth-${{ env.VERSION }}.zip
           tag: ${{ github.ref }}
 
       - name: Ceremony - Count number of constraints
         id: count_lines
         run: |
-          raw_result=$(npx snarkjs ri out/guardianhash.r1cs | grep '# of Constraints:')
+          raw_result=$(npx snarkjs ri out/zkJwtAuth.r1cs | grep '# of Constraints:')
           constraints_count=$(echo $raw_result | sed 's/.*Constraints: //' | sed 's/[^0-9]*//g')
           echo "ADJUSTED_COUNT=$constraints_count" >> $GITHUB_ENV
 
@@ -107,15 +107,15 @@ jobs:
       - name: Ceremony - Ceremony Phase 2
         run: |
           cd out
-          npx snarkjs groth16 setup guardianhash.r1cs ppot_0080_21.ptau guardianhash_0000.zkey
-          npx snarkjs zkey contribute guardianhash_0000.zkey guardianhash_0001.zkey --name="1st Contributor Name" -v -e="Some random text"
-          npx snarkjs zkey export verificationkey guardianhash_0001.zkey verification_key.json
+          npx snarkjs groth16 setup zkJwtAuth.r1cs ppot_0080_21.ptau zkJwtAuth_0000.zkey
+          npx snarkjs zkey contribute zkJwtAuth_0000.zkey zkJwtAuth_0001.zkey --name="1st Contributor Name" -v -e="Some random text"
+          npx snarkjs zkey export verificationkey zkJwtAuth_0001.zkey verification_key.json
 
       - name: Ceremony - Zip files
         run: |
           mkdir -p zipfiles
           zip -j -r zipfiles/keys-${{ env.VERSION }}.zip \
-          out/guardianhash_0001.zkey \
+          out/zkJwtAuth_0001.zkey \
           out/verification_key.json
 
       - name: Ceremony - Upload zkey to release
