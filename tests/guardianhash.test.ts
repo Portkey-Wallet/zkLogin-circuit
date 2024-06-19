@@ -69,7 +69,7 @@ describe("Guardian Hash Test", () => {
         payload_start_index: 103,
         sub_claim: padString(
           '"sub":"110117207114221115868",',
-          41
+          264
         ), 
         sub_claim_length: 30,
         sub_index_b64: 103 + 265,

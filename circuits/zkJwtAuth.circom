@@ -7,7 +7,7 @@ include "./helpers/jwtchecks.circom";
 
 template ZkJwtAuth(){
   var maxJwtLen = 1024;
-  var maxSubLen = 32; // Suport sub of length 32 first
+  var maxSubLen = 255;
   var maxSubNameLen = 5;
   var maxSubValueLen = maxSubLen + 2; // 2 for double quotes
   var maxWhiteSpaceLen = 2; // actually we don't need this
