@@ -5,7 +5,7 @@ include "circomlib/circuits/gates.circom";
 include "circomlib/circuits/mux2.circom";
 include "circomlib/circuits/multiplexer.circom";
 
-include "hasher.circom";
+// include "hasher.circom";
 
 // Return -1 if x is not a power of 2. Else, return log2(x)
 function logBase2(x) {

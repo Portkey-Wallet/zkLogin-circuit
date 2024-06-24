@@ -6,6 +6,78 @@ include "circomlib/circuits/gates.circom";
 include "misc.circom";
 include "base64.circom";
 
+// Returns the number of output chunks (each of size outWidth) needed to represent inBits.
+function getBaseConvertedOutputSize(inBits, outWidth) {
+    var outCount = inBits \ outWidth;
+    if (inBits % outWidth != 0) {
+        outCount++;
+    }
+    return outCount;
+}
+
+/**
+ConvertBase: Converts a number from base 2^inWidth to base 2^outWidth.
+
+- inWidth: The bitwidth of each input number.
+- inCount: The number of input numbers.
+- outWidth: The bitwidth of each output number.
+- outCount: The number of output numbers. (Should be inCount * inWidth / outWidth, rounded up.)
+
+In essence, we pad the bits (in big-endian) at the start with sufficiently many zeroes
+until the number of bits is a multiple of outWidth.
+*/
+template ConvertBase(inWidth, inCount, outWidth, outCount) {
+    signal input in[inCount];
+    signal output out[outCount];
+
+    var inBits = inCount * inWidth;
+    var myOutCount = getBaseConvertedOutputSize(inBits, outWidth);
+    assert(myOutCount == outCount);
+
+    component expander[inCount];
+    for (var i = 0; i < inCount; i++) {
+        expander[i] = Num2BitsBE(inWidth);
+        expander[i].in <== in[i];
+    }
+
+    signal bitsBE[inBits];
+    for (var i = 0; i < inBits; i++) {
+        var mB = i % inWidth;
+        var m = (i - mB) \ inWidth;
+
+        bitsBE[i] <== expander[m].out[mB];
+    }
+
+    // We convert things to little endian as it makes it 
+    //  easy to just append zeroes at the end.
+    signal bitsLE[inBits];
+    for (var i = 0; i < inBits; i++) {
+        bitsLE[i] <== bitsBE[inBits - 1 - i];
+    }
+
+    component compressor[outCount];
+    for (var i = 0; i < outCount - 1; i++) {
+        compressor[i] = Bits2Num(outWidth);
+    }
+    var outExtra = inBits % outWidth;
+    if (outExtra == 0) {
+        compressor[outCount - 1] = Bits2Num(outWidth);
+    } else {
+        compressor[outCount - 1] = Bits2Num(outExtra);
+    }
+
+    for (var e = 0; e < inBits; e++) {
+        var oB = e % outWidth;
+        var o = (e - oB) \ outWidth;
+
+        compressor[o].in[oB] <== bitsLE[e];
+    }
+
+    for (var i = 0; i < outCount; i++) {
+        out[i] <== compressor[outCount - 1 - i].out;
+    }
+}
+
 /**
 SliceFixed: Returns a fixed-length slice of an array.
 More precisely, in[index:index+outLen] (both inclusive).
