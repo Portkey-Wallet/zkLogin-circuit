@@ -30,3 +30,9 @@ jobs:
 
       - name: Test the main circuit
         run: npm run test tests/guardianhash.test.ts
+
+      - name: Test circuit using Poseidon
+        run: npm run test tests/guardianhash-poseidon.test.ts
+
+      - name: Test hash mapping circuit
+        run: npm run test tests/hash-mapping.test.ts

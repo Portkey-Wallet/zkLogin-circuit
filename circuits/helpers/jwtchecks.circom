@@ -4,7 +4,7 @@ include "circomlib/circuits/aliascheck.circom";
 include "circomlib/circuits/comparators.circom";
 include "circomlib/circuits/gates.circom";
 
-include "hasher.circom";
+// include "hasher.circom";
 include "misc.circom";
 include "strings.circom";
 

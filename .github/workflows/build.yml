@@ -9,6 +9,11 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        circuit_name: [zkJwtAuth, zkJwtAuthPoseidon, hashMapping]  # Add your circuit names here
+
     container:
       image: debian:bookworm
 
@@ -46,36 +51,36 @@ jobs:
       - name: Compile circuit
         run: |
           mkdir -p out
-          circom circuits/zkJwtAuth.circom --r1cs --sym --json --wasm --c -l node_modules -o out
+          circom circuits/${{ matrix.circuit_name }}.circom --r1cs --sym --json --wasm --c -l node_modules -o out
 
       - name: Build binary
         run: |
-          cd out/zkJwtAuth_cpp
+          cd out/${{ matrix.circuit_name }}_cpp
           make
 
       - name: Zip artifacts
         run: |
           mkdir -p zipfiles
-          zip -j -r zipfiles/zkJwtAuth-${{ env.VERSION }}.zip \
-          out/zkJwtAuth_js/zkJwtAuth.wasm \
-          out/zkJwtAuth_cpp/zkJwtAuth \
-          out/zkJwtAuth_cpp/zkJwtAuth.dat \
-          out/zkJwtAuth.r1cs \
-          out/zkJwtAuth.sym \
-          out/zkJwtAuth_constraints.json
+          zip -j -r zipfiles/${{ matrix.circuit_name }}-${{ env.VERSION }}.zip \
+          out/${{ matrix.circuit_name }}_js/${{ matrix.circuit_name }}.wasm \
+          out/${{ matrix.circuit_name }}_cpp/${{ matrix.circuit_name }} \
+          out/${{ matrix.circuit_name }}_cpp/${{ matrix.circuit_name }}.dat \
+          out/${{ matrix.circuit_name }}.r1cs \
+          out/${{ matrix.circuit_name }}.sym \
+          out/${{ matrix.circuit_name }}_constraints.json
 
       - name: Upload zips to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: zipfiles/zkJwtAuth-${{ env.VERSION }}.zip
-          asset_name: zkJwtAuth-${{ env.VERSION }}.zip
+          file: zipfiles/${{ matrix.circuit_name }}-${{ env.VERSION }}.zip
+          asset_name: ${{ matrix.circuit_name }}-${{ env.VERSION }}.zip
           tag: ${{ github.ref }}
 
       - name: Ceremony - Count number of constraints
         id: count_lines
         run: |
-          raw_result=$(npx snarkjs ri out/zkJwtAuth.r1cs | grep '# of Constraints:')
+          raw_result=$(npx snarkjs ri out/${{ matrix.circuit_name }}.r1cs | grep '# of Constraints:')
           constraints_count=$(echo $raw_result | sed 's/.*Constraints: //' | sed 's/[^0-9]*//g')
           echo "ADJUSTED_COUNT=$constraints_count" >> $GITHUB_ENV
 
@@ -107,15 +112,15 @@ jobs:
       - name: Ceremony - Ceremony Phase 2
         run: |
           cd out
-          npx snarkjs groth16 setup zkJwtAuth.r1cs ppot_0080_21.ptau zkJwtAuth_0000.zkey
-          npx snarkjs zkey contribute zkJwtAuth_0000.zkey zkJwtAuth_0001.zkey --name="1st Contributor Name" -v -e="Some random text"
-          npx snarkjs zkey export verificationkey zkJwtAuth_0001.zkey verification_key.json
+          npx snarkjs groth16 setup ${{ matrix.circuit_name }}.r1cs ppot_0080_21.ptau ${{ matrix.circuit_name }}_0000.zkey
+          npx snarkjs zkey contribute ${{ matrix.circuit_name }}_0000.zkey ${{ matrix.circuit_name }}_0001.zkey --name="1st Contributor Name" -v -e="Some random text"
+          npx snarkjs zkey export verificationkey ${{ matrix.circuit_name }}_0001.zkey verification_key.json
 
       - name: Ceremony - Zip files
         run: |
           mkdir -p zipfiles
           zip -j -r zipfiles/keys-${{ env.VERSION }}.zip \
-          out/zkJwtAuth_0001.zkey \
+          out/${{ matrix.circuit_name }}_0001.zkey \
           out/verification_key.json
 
       - name: Ceremony - Upload zkey to release
