@@ -58,6 +58,7 @@ template ZkJwtAuthPoseidon(){
   signal input nonce_colon_index;
   signal input nonce_value_index;
   signal input nonce_value_length;
+  signal output id_hash;
 
   component VERIFYJWT = JWTVerify(maxJwtLen, 121, 17);
 
@@ -146,7 +147,7 @@ template ZkJwtAuthPoseidon(){
   HASH.sub <== sub;
   HASH.salt <== salt;
 
-  signal output id_hash <== HASH.out;
+  id_hash <== HASH.out;
 }
 
 component main {public [pubkey, salt]} = ZkJwtAuthPoseidon();
