@@ -119,7 +119,7 @@ jobs:
       - name: Ceremony - Zip files
         run: |
           mkdir -p zipfiles
-          zip -j -r zipfiles/keys-${{ env.VERSION }}.zip \
+          zip -j -r zipfiles/${{ matrix.circuit_name }}-keys-${{ env.VERSION }}.zip \
           out/${{ matrix.circuit_name }}_0001.zkey \
           out/verification_key.json
 
@@ -127,6 +127,6 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: zipfiles/keys-${{ env.VERSION }}.zip
-          asset_name: keys-${{ env.VERSION }}.zip
+          file: zipfiles/${{ matrix.circuit_name }}-keys-${{ env.VERSION }}.zip
+          asset_name: ${{ matrix.circuit_name }}-keys-${{ env.VERSION }}.zip
           tag: ${{ github.ref }}
