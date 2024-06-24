@@ -112,7 +112,7 @@ jobs:
       - name: Ceremony - Ceremony Phase 2
         run: |
           cd out
-          npx snarkjs groth16 setup ${{ matrix.circuit_name }}.r1cs ppot_0080_21.ptau ${{ matrix.circuit_name }}_0000.zkey
+          npx snarkjs groth16 setup ${{ matrix.circuit_name }}.r1cs ppot_0080_${{ env.POWER_OF_2 }}.ptau ${{ matrix.circuit_name }}_0000.zkey
           npx snarkjs zkey contribute ${{ matrix.circuit_name }}_0000.zkey ${{ matrix.circuit_name }}_0001.zkey --name="1st Contributor Name" -v -e="Some random text"
           npx snarkjs zkey export verificationkey ${{ matrix.circuit_name }}_0001.zkey verification_key.json
 
