@@ -1,6 +1,20 @@
 pragma circom 2.0.0;
-include "./jwt.circom";
 include "./base64.circom";
+
+template JWTSplit(max_bytes) {
+  signal input jwt[max_bytes];
+  signal output header[max_bytes];
+  signal output payload[max_bytes];
+  signal output signature[max_bytes];
+
+  // split JWT 
+  component splitedJWT = SplitBy(max_bytes, 46, 3); // 46 is '.'
+
+  splitedJWT.text <== jwt;
+  header <== splitedJWT.out[0];
+  payload <== splitedJWT.out[1];
+  signature <== splitedJWT.out[2];
+}
 
 template ExtractSubFromJWT(jwt_max, sub_max){
   signal input jwt[jwt_max];
