@@ -32,10 +32,10 @@ jobs:
         run: npm install
 
       - name: Test the main circuit
-        run: npm run test tests/guardianhash.test.ts
+        run: npm run test tests/zkLogin.test.ts
 
       - name: Test circuit using Poseidon
-        run: npm run test tests/guardianhash-poseidon.test.ts
+        run: npm run test tests/zkLoginPoseidon.test.ts
 
       - name: Test hash mapping circuit
         run: npm run test tests/hash-mapping.test.ts
