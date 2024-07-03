@@ -6,3 +6,4 @@ export { sha256Pad } from "./sha-hash";
 export { toCircomBigIntBytes } from "./to-circom-big-int-bytes";
 export { padString } from "./pad-string";
 export { bigIntToChunkedBytes } from "./big-int-to-chunked-bytes";
+export { sha256PreimagePadding } from "./sha256";
