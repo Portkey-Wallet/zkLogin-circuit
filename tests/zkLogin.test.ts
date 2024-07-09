@@ -3,7 +3,7 @@ import path from "path";
 import { pki } from "node-forge";
 import { wasm as wasm_tester } from "circom_tester";
 import { describe, beforeAll, it } from "vitest";
-import { hexToBytes, padString, toCircomBigIntBytes, bigIntToChunkedBytes, sha256PreimagePadding } from "../utils";
+import { hexToBytes, padString, toCircomBigIntBytes } from "../utils";
 import { loadSymbolsWorkaround } from "../utils/workarounds";
 
 // Function to split large files into smaller chunks
@@ -27,10 +27,10 @@ const splitBuffer = (buffer: Buffer, chunkSize: number): Buffer[] => {
   return chunks;
 };
 
-describe("zkLogin Test", () => {
+describe("Guardian Hash Test", () => {
   let circuit: any;
 
-  describe("zkLogin Test", () => {
+  describe("Guardian Hash Test", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
         path.join(__dirname, "../circuits/zkLogin.circom"),
@@ -43,50 +43,47 @@ describe("zkLogin Test", () => {
       loadSymbolsWorkaround(circuit);
     });
 
+    it("should main be ok", async function () {
 
-    it("should verify long jwt", async function () {
-      const publicKey = "rhgQZT3t9MgNBv9_4qE58CLCbDfEaRd9HgPd_Zmjg1TIYjHh1UgMPVeVekyU2JiuUZPbnlEbv8WUsxyNNQJfATvfMbXaUcrePSdW32zIaMOeTbn0VXZ3tqx5IyiP0IfJt-kT9MilGAkeJn8me7x5_uNGOpiPCWQaxFxTikVUtGO5AbGh2PTULzKjVjZWwQrPB1fqEe6Ar6Im-3RcZ-zOd3N2ThgQEzLLRe4RE6bSvBQUuxX9o_AkY0SCVZZB2VhjQYBN3EUFmKsD46rrneBn64Vduy3jWtBYXA1avDRCl0Y8yQEBOrtgikEz_hog4O4EKP5mAVSf8Iyfl_RMdxrOAQ";
-      const pubkeyBigInt = BigInt("0x" + Buffer.from(publicKey, "base64").toString("hex"));
+      const publicKey = "xjWd1j8GmmWzuz732haG9HECXsSZBvxOBLph3FQhk_tplhWloI1ywx-RdopUZt1lndbOM9n99lZJkpQyNJ1sdy7JFgYLjqj-wtHdEaQlBGEQtmkW8zUjr_N3bmpsxGbPzOzlKe3qddtoxXvn9rI_RvHfJD1YY-6kayQeyPOBz_4ML1lvI_JHV-Bb1MSmSk3WaAh5PzeqleusmUT87Gqfu02cOPrY8cwugqo65D6-wzAEeVvceV8-c36TMoLU5csU05GBVplgd6Ouuw35ZsETG4si4QQJztC3KsZ4jhYM-aJ3jeFPt0r3cQooiXdZBp3JkXSpE-UUaOVPsXo7WiVmww==";
 
       // signature
       const jwtSignature =
-        "hnI69slCu-aHQKftEX4jIR1ZVtfjcLYzi0vp11Lly1O9t6RbZT9f_og3ZJ_UzseiW9Opam5Ke4iaq_ZnHES8bvTdVYhpfqbb39xGWIJXDjEeNe1FyeF7RkukeFUUFdfikGoKO0UObD5gNm7v6KnnjmHxRpmIFbRZLJXuqoFQjwxfD_1yKmHkg9UjC1JplaTtb6nrl4ocw2KOBprWDWG7jiFJhkZqEmXslR8S7Atyg0fbDyt2pTHbLV-yaIvb6V4JTCZlgJPKze5g-z1YLv1FNiLSWfaRclU0DUOxLnwqcgWVwsXCsuauEXyzi689MfRvnAJkdd5HLe9jdWYQyzQSZA";
+        "po6LchPr082VpjJjVliw6wItx32nBRh5a-w0T_6oQGz2N7MixGdvIeQ9gdOiyLOKPpz3NCR9oTf1V17Oxv1fgIgOP3wHThCEBToUbquAMKQjzUcujSsv3b2f0O3i28NwVBvtAYefdpvgxMEZot-S_US-2U9fBlI1ubkeLSOr4G_tLVPtR0iwfLLirW5NxR96oEp3BZ2BtSlDqLGlGXXFtNb4_Mvg40wzR4FT-RMb39zKlW0me7bcCZAwjuYEREptdYsUrHyDf72Q18NK2hBs6baNiBriNPwpHA5EyteH26SqaKYjaJGnEHPmSR4QrdwQX_LpvRlgETm_v6ZQw1t-Og";
       // eslint-disable-next-line prettier/prettier, no-restricted-globals
       const signatureBigInt = BigInt(
         "0x" + Buffer.from(jwtSignature, "base64").toString("hex")
       );
 
-      const jwt = sha256PreimagePadding("eyJhbGciOiJSUzI1NiIsImtpZCI6IjNkNTgwZjBhZjdhY2U2OThhMGNlZTdmMjMwYmNhNTk0ZGM2ZGJiNTUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiMTc2MTQ3NzQ0NzMzLWEya3M2ODF1dXFybWI4YWpxcnB1MTd0ZTQyZ3N0NmxxLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiMTc2MTQ3NzQ0NzMzLWEya3M2ODF1dXFybWI4YWpxcnB1MTd0ZTQyZ3N0NmxxLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTE2MDQ5MzgxNjMxMjI0Nzc0OTA3IiwiZW1haWwiOiJpbmZvLnBvcnRrZXkuZmluYW5jZUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IjFUWnZxNnVXbC1OZVdzV0x2bHNDb1EiLCJub25jZSI6ImE2Nzc5OTkzOTZkYzQ5YTI4YWQ2YzljMjQyNzE5YmIzYTY3Nzk5OTM5NmRjNDlhMjhhZDZjOWMyNDI3MTliYjMiLCJuYmYiOjE3MTkzMDEzNjYsImlhdCI6MTcxOTMwMTY2NiwiZXhwIjoxNzE5MzA1MjY2LCJqdGkiOiI2MTdjY2VmODgzMTQ1OTA0YjI3ZDYxZjEwNjIwODAwNzU3NGRjMWVkIn0");
 
-      let jwtBytes = Array.from(jwt);
-
-      jwtBytes.push(...new Array(1024 - jwtBytes.length).fill(0));
+      const pubkeyBigInt = BigInt("0x" + Buffer.from(publicKey, "base64").toString("hex"));
 
       const data = {
-        padded_unsigned_jwt: jwtBytes,
-        payload_start_index: 103,
-        payload_len: 659,
-        num_sha2_blocks: 13,
-        signature: bigIntToChunkedBytes(signatureBigInt, 64, 32),
-        pubkey: bigIntToChunkedBytes(pubkeyBigInt, 64, 32),
+        jwt: padString(
+          "eyJhbGciOiJSUzI1NiIsImtpZCI6IjMyM2IyMTRhZTY5NzVhMGYwMzRlYTc3MzU0ZGMwYzI1ZDAzNjQyZGMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI3MzcwMjgwNDA4NTgtOHVmcXNvYzdpNWtmc3NkdGt1N3Rtc2dzc25tOGZjOGQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTAxMTcyMDcxMTQyMjExMTU4NjgiLCJhdF9oYXNoIjoic2hUS2RwcWpOU3RNc3IzTDE4Z285ZyIsIm5vbmNlIjoiNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MjQyNDI0MiIsImlhdCI6MTcxNjQ0OTgzNSwiZXhwIjoxNzE2NDUzNDM1fQ",
+          1024
+        ),
+        signature: toCircomBigIntBytes(signatureBigInt),
+        pubkey: toCircomBigIntBytes(pubkeyBigInt),
         salt: Array.from(hexToBytes("a677999396dc49a28ad6c9c242719bb3"), (b) => b),
+        payload_start_index: 103,
         sub_claim: padString(
-          '"sub":"116049381631224774907",',
+          '"sub":"110117207114221115868",',
           264
         ), 
         sub_claim_length: 30,
-        sub_index_b64: 357,
-        sub_length_b64: 42,
+        sub_index_b64: 103 + 265,
+        sub_length_b64: 40,
         sub_name_length: 5,
         sub_colon_index: 5,
         sub_value_index: 6,
         sub_value_length: 23,
         nonce_claim: padString(
-          '"nonce":"a677999396dc49a28ad6c9c242719bb3a677999396dc49a28ad6c9c242719bb3",',
+          '"nonce":"4242424242424242424242424242424242424242424242424242424242424242",',
           77
         ),
         nonce_claim_length: 75,
-        nonce_index_b64: 528,
+        nonce_index_b64: 103 + 352,
         nonce_length_b64: 101,
         nonce_name_length: 7,
         nonce_colon_index: 7,
@@ -95,15 +92,15 @@ describe("zkLogin Test", () => {
       };
 
       const witness = await circuit.calculateWitness(data);
+      console.log(witness);
 
-      const bytes = hexToBytes("04c5883a8d16271daa5c3a1f35263df8b43ccb8aa08b1943ceae79d54dde1456");
+      const bytes = hexToBytes("2eab4af9ceb2865e42f4ead4d9decc71d4ecb1531f9b7521d1e309c2c2a02246");
 
       // Assert output with complete witness
       await circuit.assertOut(witness, {
-        id_hash: [...bytes],
-        nonce: padString('a677999396dc49a28ad6c9c242719bb3a677999396dc49a28ad6c9c242719bb3', 64),
+        id_hash: '9340168379609132233074617967082586477056958824754337733208830122770402483169',
+        nonce: padString('4242424242424242424242424242424242424242424242424242424242424242', 64),
       });
     });
-
   });
 });

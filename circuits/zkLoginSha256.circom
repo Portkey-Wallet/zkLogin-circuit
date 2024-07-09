@@ -1,11 +1,10 @@
 pragma circom 2.0.0;
 include "./helpers/jwt-new.circom";
-include "./helpers/guardian-identifier-hash-poseidon.circom";
+include "./helpers/guardian-identifier-hash.circom";
 include "./helpers/base64.circom";
-include "./helpers/jwt-sub-extract.circom";
 include "./helpers/jwtchecks.circom";
 
-template ZkLoginPoseidon(maxHeaderLen, maxPaddedUnsignedJWTLen){
+template ZkLoginSha256(maxHeaderLen, maxPaddedUnsignedJWTLen){
   var inCount = maxPaddedUnsignedJWTLen;
 
   var maxSubLen = 255;
@@ -52,7 +51,7 @@ template ZkLoginPoseidon(maxHeaderLen, maxPaddedUnsignedJWTLen){
   signal input nonce_value_index;
   signal input nonce_value_length;
 
-  signal output id_hash;
+  signal output id_hash[32];
 
   // component VERIFYJWT = JWTVerify(maxJwtLen, 121, 17);
   component VerifyJwt = JWTVerifyNew(maxHeaderLen, maxPaddedUnsignedJWTLen);
@@ -112,12 +111,13 @@ template ZkLoginPoseidon(maxHeaderLen, maxPaddedUnsignedJWTLen){
       sub_value_with_quotes, sub_value_length
   );
 
-  component HASH = IdentifierHashByPoseidon(maxSubLen, 16);
+  component CalculateIdHash = GuardianIdentifierHash(maxSubLen, 16);
+  CalculateIdHash.sub <== sub;
+  CalculateIdHash.sub_len <== sub_value_length - 2;
+  CalculateIdHash.salt <== salt;
+  CalculateIdHash.salt_len <== 16;
 
-  HASH.sub <== sub;
-  HASH.salt <== salt;
-
-  id_hash <== HASH.out;
+  id_hash <== CalculateIdHash.out;
 }
 
-component main {public [pubkey, salt]} = ZkLoginPoseidon(256, 1024);
+component main {public [pubkey, salt]} = ZkLoginSha256(256, 1024);

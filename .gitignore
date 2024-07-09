@@ -7,3 +7,4 @@ tests/compiled-test-circuit
 *.wtns
 bls12381/
 bn128/
+.DS_Store

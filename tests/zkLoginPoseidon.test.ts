@@ -33,7 +33,7 @@ describe("zkLogin Test", () => {
   describe("zkLogin Test", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "../circuits/zkLoginPoseidon.circom"),
+        path.join(__dirname, "../circuits/zkLogin.circom"),
         {
           recompile: true,
           output: path.join(__dirname, "./compiled-test-circuit"),

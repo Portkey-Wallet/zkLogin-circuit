@@ -33,7 +33,7 @@ describe("Hash Mapping Test", () => {
   describe("Hash Mapping Test", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "../circuits/hashMapping.circom"),
+        path.join(__dirname, "../circuits/idHashMapping.circom"),
         {
           recompile: true,
           output: path.join(__dirname, "./compiled-test-circuit"),
