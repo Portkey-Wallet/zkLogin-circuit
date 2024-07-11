@@ -3,6 +3,6 @@
 
 pragma circom 2.1.5;
 
-include "../circuits/helpers/guardian-identifier-hash.circom";
+include "../../../circuits/helpers/utils.circom";
 
 component main = CombineBytes(32, 16);

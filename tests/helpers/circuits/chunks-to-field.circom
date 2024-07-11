@@ -3,7 +3,7 @@
 
 pragma circom 2.1.5;
 
-include "../circuits/helpers/hashtofield.circom";
+include "../../../circuits/helpers/hashtofield.circom";
 
 
 component main = ChunksToFieldElem(16, 8);

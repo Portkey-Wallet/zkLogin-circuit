@@ -6,21 +6,21 @@ import {
   shaHash,
   sha256Pad,
   Uint8ArrayToCharArray,
-} from "../utils";
-import { hexToBytes } from "../utils";
+} from "../../utils";
+import { hexToBytes } from "../../utils";
 
-describe("Guardian Identifier test", function () {
+describe("Bytes concatenation test", function () {
   let circuit;
 
-  describe("Hash1 should be correct", () => {
+  describe("Bytes concatenation test", () => {
     beforeAll(async () => {
-      circuit = await wasm(path.join(__dirname, "./combined.circom"), {
+      circuit = await wasm(path.join(__dirname, "./circuits/combined.circom"), {
         // @dev During development recompile can be set to false if you are only making changes in the tests.
         // This will save time by not recompiling the circuit every time.
         // Compile: circom "./tests/email-verifier-test.circom" --r1cs --wasm --sym --c --wat --output "./tests/compiled-test-circuit"
         recompile: true,
         output: path.join(__dirname, "./compiled-test-circuit"),
-        include: path.join(__dirname, "../node_modules"),
+        include: path.join(__dirname, "../../node_modules"),
       });
     });
 

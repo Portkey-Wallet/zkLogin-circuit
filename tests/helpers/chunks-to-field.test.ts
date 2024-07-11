@@ -3,8 +3,8 @@ import path from "path";
 import { pki } from "node-forge";
 import { wasm as wasm_tester } from "circom_tester";
 import { describe, beforeAll, it } from "vitest";
-import { hexToBytes, padString, toCircomBigIntBytes } from "../utils";
-import { loadSymbolsWorkaround } from "../utils/workarounds";
+import { hexToBytes, padString, toCircomBigIntBytes } from "../../utils";
+import { loadSymbolsWorkaround } from "../../utils/workarounds";
 
 // Function to split large files into smaller chunks
 const splitFile = (filePaths: string[], chunkSize: number): Buffer[] => {
@@ -33,11 +33,11 @@ describe("Convert Bytes to Field Test", () => {
   describe("Convert Bytes to Field Test", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "./chunks-to-field.circom"),
+        path.join(__dirname, "./circuits/chunks-to-field.circom"),
         {
           recompile: true,
           output: path.join(__dirname, "./compiled-test-circuit"),
-          include: path.join(__dirname, "../node_modules"),
+          include: path.join(__dirname, "../../node_modules"),
         }
       );
       loadSymbolsWorkaround(circuit);
@@ -50,7 +50,6 @@ describe("Convert Bytes to Field Test", () => {
       };
 
       const witness = await circuit.calculateWitness(data);
-      console.log(witness);
 
       // Assert output with complete witness
       await circuit.assertOut(witness, {
