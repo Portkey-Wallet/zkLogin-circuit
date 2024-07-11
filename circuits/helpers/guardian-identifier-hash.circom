@@ -4,29 +4,31 @@ include "./string.circom";
 include "./utils.circom";
 include "circomlib/circuits/bitify.circom";
 
-template Hash(sub_bytes){
+template Sha254Hash(sub_bytes){
   signal input sub[sub_bytes];
   signal input sub_len;
   signal output out[32];
 
-  var paddedBytes[640];
+  var max_padded_len = (sub_bytes + 9) + (64 - (sub_bytes + 9) % 64);
+
+  var paddedBytes[max_padded_len];
   for (var i = 0; i < sub_len; i++) {
       paddedBytes[i] = sub[i];
   }
 
-  for (var i = sub_len; i < 640; i++) {
+  for (var i = sub_len; i < max_padded_len; i++) {
       paddedBytes[i] = 0;
   }
 
-  component sha256Pad = Sha256PadBytes(640);
+  component sha256Pad = Sha256PadBytes(max_padded_len);
   sha256Pad.in <-- paddedBytes;
   sha256Pad.in_bytes <== sub_len;
 
-  component HASH1 = Sha256BytesOutputBytes(640);
+  component sha256BB = Sha256BytesOutputBytes(max_padded_len);
   
-  HASH1.in_padded <== sha256Pad.padded_text;
-  HASH1.in_len_padded_bytes <== sha256Pad.padded_len;
-  out <-- HASH1.out;
+  sha256BB.in_padded <== sha256Pad.padded_text;
+  sha256BB.in_len_padded_bytes <== sha256Pad.padded_len;
+  out <== sha256BB.out;
 }
 
 template HashAndCombine(sub_bytes, salt_bytes){
@@ -36,16 +38,16 @@ template HashAndCombine(sub_bytes, salt_bytes){
   signal input salt[salt_bytes];
   signal output out[32+salt_bytes];
 
-  component HASH1 = Hash(sub_bytes);
-  HASH1.sub <== sub;
-  HASH1.sub_len <== sub_len;
+  component sha254Hash = Sha254Hash(sub_bytes);
+  sha254Hash.sub <== sub;
+  sha254Hash.sub_len <== sub_len;
   
   var hash2_bytes = salt_bytes + 32;
   
-  component COMBINED = CombineBytes(32, salt_bytes);
-  COMBINED.first <== HASH1.out;
-  COMBINED.second <== salt;
-  out <-- COMBINED.out;
+  component combined = CombineBytes(32, salt_bytes);
+  combined.first <== sha254Hash.out;
+  combined.second <== salt;
+  out <== combined.out;
 }
 
 template GuardianIdentifierHash(sub_bytes, salt_bytes){
@@ -80,5 +82,5 @@ template GuardianIdentifierHash(sub_bytes, salt_bytes){
   
   HASH2.in_padded <== sha256Pad.padded_text;
   HASH2.in_len_padded_bytes <== sha256Pad.padded_len;
-  out <-- HASH2.out;
+  out <== HASH2.out;
 }
