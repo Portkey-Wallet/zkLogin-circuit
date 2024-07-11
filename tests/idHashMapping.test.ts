@@ -27,10 +27,10 @@ const splitBuffer = (buffer: Buffer, chunkSize: number): Buffer[] => {
   return chunks;
 };
 
-describe("Hash Mapping Test", () => {
+describe("Id Hash Mapping Test", () => {
   let circuit: any;
 
-  describe("Hash Mapping Test", () => {
+  describe("Id Hash Mapping Test", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
         path.join(__dirname, "../circuits/idHashMapping.circom"),
@@ -43,7 +43,7 @@ describe("Hash Mapping Test", () => {
       loadSymbolsWorkaround(circuit);
     });
 
-    it("should map hashes correctly", async function () {
+    it("should map sha256 based and poseidon based id (two times hash with salt) correctly", async function () {
 
       const data = {
         sub: padString(
