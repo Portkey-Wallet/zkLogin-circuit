@@ -32,4 +32,4 @@ jobs:
         run: npm install
 
       - name: Test the main circuit
-        run: npm run Test
+        run: npm run test
