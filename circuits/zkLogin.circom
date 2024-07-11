@@ -1,7 +1,6 @@
 pragma circom 2.0.0;
 include "./helpers/jwt-new.circom";
 include "./helpers/guardian-identifier-hash-poseidon.circom";
-include "./helpers/base64.circom";
 include "./helpers/jwtchecks.circom";
 
 template ZkLogin(maxHeaderLen, maxPaddedUnsignedJWTLen){
