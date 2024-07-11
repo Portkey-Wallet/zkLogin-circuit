@@ -44,7 +44,7 @@ describe("zkLogin Test", () => {
     });
 
 
-    it("should verify long jwt", async function () {
+    it("should verify jwt and generate id hash", async function () {
       const publicKey = "rhgQZT3t9MgNBv9_4qE58CLCbDfEaRd9HgPd_Zmjg1TIYjHh1UgMPVeVekyU2JiuUZPbnlEbv8WUsxyNNQJfATvfMbXaUcrePSdW32zIaMOeTbn0VXZ3tqx5IyiP0IfJt-kT9MilGAkeJn8me7x5_uNGOpiPCWQaxFxTikVUtGO5AbGh2PTULzKjVjZWwQrPB1fqEe6Ar6Im-3RcZ-zOd3N2ThgQEzLLRe4RE6bSvBQUuxX9o_AkY0SCVZZB2VhjQYBN3EUFmKsD46rrneBn64Vduy3jWtBYXA1avDRCl0Y8yQEBOrtgikEz_hog4O4EKP5mAVSf8Iyfl_RMdxrOAQ";
       const pubkeyBigInt = BigInt("0x" + Buffer.from(publicKey, "base64").toString("hex"));
 
@@ -96,11 +96,9 @@ describe("zkLogin Test", () => {
 
       const witness = await circuit.calculateWitness(data);
 
-      const bytes = hexToBytes("04c5883a8d16271daa5c3a1f35263df8b43ccb8aa08b1943ceae79d54dde1456");
-
       // Assert output with complete witness
       await circuit.assertOut(witness, {
-        id_hash: [...bytes],
+        id_hash: '8208523664675913588953211964152238115542069990215959182578005311778533289585',
         nonce: padString('a677999396dc49a28ad6c9c242719bb3a677999396dc49a28ad6c9c242719bb3', 64),
       });
     });

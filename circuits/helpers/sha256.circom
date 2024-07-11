@@ -9,6 +9,33 @@ include "./string.circom";
 include "./sha256general.circom";
 include "./sha256partial.circom";
 
+template Sha256PadAndHash(max_bytes){
+  signal input in[max_bytes];
+  signal input in_len;
+  signal output out[32];
+
+  var max_padded_len = (max_bytes + 9) + (64 - (max_bytes + 9) % 64);
+
+  var paddedBytes[max_padded_len];
+  for (var i = 0; i < in_len; i++) {
+      paddedBytes[i] = in[i];
+  }
+
+  for (var i = in_len; i < max_padded_len; i++) {
+      paddedBytes[i] = 0;
+  }
+
+  component sha256Pad = Sha256PadBytes(max_padded_len);
+  sha256Pad.in <-- paddedBytes;
+  sha256Pad.in_bytes <== in_len;
+
+  component sha256BB = Sha256BytesOutputBytes(max_padded_len);
+  
+  sha256BB.in_padded <== sha256Pad.padded_text;
+  sha256BB.in_len_padded_bytes <== sha256Pad.padded_len;
+  out <== sha256BB.out;
+}
+
 template Sha256BytesOutputBytes(max_num_bytes) {
     signal input in_padded[max_num_bytes];
     signal input in_len_padded_bytes;
@@ -53,14 +80,16 @@ template Sha256PadBytes(max_bytes) {
     // in_bytes + 1 bytes + 8 bytes length < max_bytes
     assert(in_bytes + 9 < max_bytes);
 
-    padded_len <-- (in_bytes + 9) + (64 - (in_bytes + 9) % 64);
+    var padding_len = (in_bytes + 9) == 64 ? 0 : 64 - (in_bytes + 9) % 64;
+
+    padded_len <-- (in_bytes + 9) + padding_len;
     assert(padded_len % 64 == 0);
 
     component len2bytes = Packed2BytesBigEndian(8);
     len2bytes.in <== in_bytes * 8;
 
     for (var i = 0; i < max_bytes; i++) {
-        padded_text[i] <-- i < in_bytes ? in[i] : (i == in_bytes ? (1 << 7) : (i < padded_len ? (i % 64 < 56 ? 0 : (i % 64 > 56 ? len2bytes.out[(i % 64 - 56)]: 0)) : 0)); // Add the 1 on the end and text length
+        padded_text[i] <-- i < in_bytes ? in[i] : (i == in_bytes ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
     }
 }
 
@@ -75,15 +104,16 @@ template Sha256Pad(max_bytes) {
 
     // len.length + 1 bytes + 8 bytes length < max_bytes
     assert(len.length + 9 < max_bytes);
+    var padding_len = (len.length + 9) == 64 ? 0 : 64 - (len.length + 9) % 64;
 
-    padded_len <-- (len.length + 9) + (64 - (len.length + 9) % 64);
+    padded_len <-- (len.length + 9) + padding_len;
     assert(padded_len % 64 == 0);
 
     component len2bytes = Packed2BytesBigEndian(8);
     len2bytes.in <== len.length * 8;
 
     for (var i = 0; i < max_bytes; i++) {
-        padded_text[i] <-- i < len.length ? text[i] : (i == len.length ? (1 << 7) : (i < padded_len ? (i % 64 < 56 ? 0 : (i % 64 > 56 ? len2bytes.out[(i % 64 - 56)]: 0)) : 0)); // Add the 1 on the end and text length
+        padded_text[i] <-- i < len.length ? text[i] : (i == len.length ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
     }
 }
 

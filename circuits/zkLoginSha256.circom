@@ -1,9 +1,9 @@
 pragma circom 2.0.0;
 include "./helpers/jwt-new.circom";
-include "./helpers/idhash_poseidon.circom";
+include "./helpers/idhash_sha256.circom";
 include "./helpers/jwtchecks.circom";
 
-template ZkLogin(maxHeaderLen, maxPaddedUnsignedJWTLen){
+template ZkLoginSha256(maxHeaderLen, maxPaddedUnsignedJWTLen){
   var inCount = maxPaddedUnsignedJWTLen;
 
   var maxSubLen = 255;
@@ -50,7 +50,7 @@ template ZkLogin(maxHeaderLen, maxPaddedUnsignedJWTLen){
   signal input nonce_value_index;
   signal input nonce_value_length;
 
-  signal output id_hash;
+  signal output id_hash[32];
 
   // component VERIFYJWT = JWTVerify(maxJwtLen, 121, 17);
   component VerifyJwt = JWTVerifyNew(maxHeaderLen, maxPaddedUnsignedJWTLen);
@@ -110,12 +110,13 @@ template ZkLogin(maxHeaderLen, maxPaddedUnsignedJWTLen){
       sub_value_with_quotes, sub_value_length
   );
 
-  component idHasher = IdHashPoseidon(maxSubLen, 16);
+  component CalculateIdHash = IdHashSha256(maxSubLen, 16);
+  CalculateIdHash.sub <== sub;
+  CalculateIdHash.sub_len <== sub_value_length - 2;
+  CalculateIdHash.salt <== salt;
+  CalculateIdHash.salt_len <== 16;
 
-  idHasher.sub <== sub;
-  idHasher.salt <== salt;
-
-  id_hash <== idHasher.out;
+  id_hash <== CalculateIdHash.out;
 }
 
-component main {public [pubkey, salt]} = ZkLogin(256, 1024);
+component main {public [pubkey, salt]} = ZkLoginSha256(256, 1024);

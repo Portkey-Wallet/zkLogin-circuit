@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        circuit_name: [zkLogin, zkLoginPoseidon, hashMapping]  # Add your circuit names here
+        circuit_name: [zkLogin, zkLoginSha256, idHashMapping]  # Add your circuit names here
 
     container:
       image: debian:bookworm

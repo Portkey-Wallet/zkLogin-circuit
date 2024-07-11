@@ -2,8 +2,9 @@ node_modules
 out
 *.ptau
 *.zkey
-tests/compiled-test-circuit
+tests/**/compiled-test-circuit
 *.r1cs
 *.wtns
 bls12381/
 bn128/
+.DS_Store
