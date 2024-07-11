@@ -3,16 +3,16 @@
 
 import { wasm as wasm_tester } from "circom_tester";
 import path from "path";
-import { padString } from "../utils";
+import { padString } from "../../utils";
 import { describe, beforeAll, it } from "vitest";
 
-describe("Substring Test", () => {
+describe("String utils Test", () => {
   let circuit: any;
 
-  describe("SubString", () => {
+  describe("SubString Test", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "./string-substring-test.circom"),
+        path.join(__dirname, "./circuits/substring_test.circom"),
         {
           // @dev During development recompile can be set to false if you are only making changes in the tests.
           // This will save time by not recompiling the circuit every time.
