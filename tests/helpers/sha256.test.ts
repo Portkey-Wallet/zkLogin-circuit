@@ -9,7 +9,7 @@ import {
   shaHash,
   Uint8ArrayToCharArray,
   uint8ToBits,
-} from "../utils";
+} from "../../utils";
 import { describe, beforeAll, it } from "vitest";
 
 describe("SHA256", () => {
@@ -18,14 +18,14 @@ describe("SHA256", () => {
   describe("Sha256Bytes", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "./sha256-bytes-test.circom"),
+        path.join(__dirname, "./circuits/sha256-bytes-test.circom"),
         {
           // @dev During development recompile can be set to false if you are only making changes in the tests.
           // This will save time by not recompiling the circuit every time.
           // Compile: circom "./tests/email-verifier-test.circom" --r1cs --wasm --sym --c --wat --output "./tests/compiled-test-circuit"
           recompile: true,
           output: path.join(__dirname, "./compiled-test-circuit"),
-          include: path.join(__dirname, "../node_modules"),
+          include: path.join(__dirname, "../../node_modules"),
         }
       );
     });
@@ -57,14 +57,14 @@ describe("SHA256", () => {
   describe("Sha256Pad", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "./sha256-pad-test.circom"),
+        path.join(__dirname, "./circuits/sha256-pad-test.circom"),
         {
           // @dev During development recompile can be set to false if you are only making changes in the tests.
           // This will save time by not recompiling the circuit every time.
           // Compile: circom "./tests/email-verifier-test.circom" --r1cs --wasm --sym --c --wat --output "./tests/compiled-test-circuit"
           recompile: true,
           output: path.join(__dirname, "./compiled-test-circuit"),
-          include: path.join(__dirname, "../node_modules"),
+          include: path.join(__dirname, "../../node_modules"),
         }
       );
     });
@@ -95,14 +95,14 @@ describe("SHA256", () => {
   describe("Sha256String", () => {
     beforeAll(async () => {
       circuit = await wasm_tester(
-        path.join(__dirname, "./sha256-string-test.circom"),
+        path.join(__dirname, "./circuits/sha256-string-test.circom"),
         {
           // @dev During development recompile can be set to false if you are only making changes in the tests.
           // This will save time by not recompiling the circuit every time.
           // Compile: circom "./tests/email-verifier-test.circom" --r1cs --wasm --sym --c --wat --output "./tests/compiled-test-circuit"
           recompile: true,
           output: path.join(__dirname, "./compiled-test-circuit"),
-          include: path.join(__dirname, "../node_modules"),
+          include: path.join(__dirname, "../../node_modules"),
         }
       );
     });
