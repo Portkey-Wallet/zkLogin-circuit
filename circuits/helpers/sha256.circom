@@ -9,6 +9,33 @@ include "./string.circom";
 include "./sha256general.circom";
 include "./sha256partial.circom";
 
+template Sha256PadAndHash(max_bytes){
+  signal input in[max_bytes];
+  signal input in_len;
+  signal output out[32];
+
+  var max_padded_len = (max_bytes + 9) + (64 - (max_bytes + 9) % 64);
+
+  var paddedBytes[max_padded_len];
+  for (var i = 0; i < in_len; i++) {
+      paddedBytes[i] = in[i];
+  }
+
+  for (var i = in_len; i < max_padded_len; i++) {
+      paddedBytes[i] = 0;
+  }
+
+  component sha256Pad = Sha256PadBytes(max_padded_len);
+  sha256Pad.in <-- paddedBytes;
+  sha256Pad.in_bytes <== in_len;
+
+  component sha256BB = Sha256BytesOutputBytes(max_padded_len);
+  
+  sha256BB.in_padded <== sha256Pad.padded_text;
+  sha256BB.in_len_padded_bytes <== sha256Pad.padded_len;
+  out <== sha256BB.out;
+}
+
 template Sha256BytesOutputBytes(max_num_bytes) {
     signal input in_padded[max_num_bytes];
     signal input in_len_padded_bytes;

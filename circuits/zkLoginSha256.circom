@@ -1,6 +1,6 @@
 pragma circom 2.0.0;
 include "./helpers/jwt-new.circom";
-include "./helpers/guardian-identifier-hash.circom";
+include "./helpers/idhash_sha256.circom";
 include "./helpers/jwtchecks.circom";
 
 template ZkLoginSha256(maxHeaderLen, maxPaddedUnsignedJWTLen){
@@ -110,7 +110,7 @@ template ZkLoginSha256(maxHeaderLen, maxPaddedUnsignedJWTLen){
       sub_value_with_quotes, sub_value_length
   );
 
-  component CalculateIdHash = GuardianIdentifierHash(maxSubLen, 16);
+  component CalculateIdHash = IdHashSha256(maxSubLen, 16);
   CalculateIdHash.sub <== sub;
   CalculateIdHash.sub_len <== sub_value_length - 2;
   CalculateIdHash.salt <== salt;

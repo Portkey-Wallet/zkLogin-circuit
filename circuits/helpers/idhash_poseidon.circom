@@ -1,7 +1,7 @@
 pragma circom 2.0.0;
 include "./hashtofield.circom";
 
-template IdentifierHashByPoseidon(sub_bytes, salt_bytes){
+template IdHashPoseidon(sub_bytes, salt_bytes){
   signal input sub[sub_bytes];
   signal input salt[salt_bytes];
 

@@ -1,6 +1,6 @@
 pragma circom 2.0.0;
 include "./helpers/jwt-new.circom";
-include "./helpers/guardian-identifier-hash-poseidon.circom";
+include "./helpers/idhash_poseidon.circom";
 include "./helpers/jwtchecks.circom";
 
 template ZkLogin(maxHeaderLen, maxPaddedUnsignedJWTLen){
@@ -110,12 +110,12 @@ template ZkLogin(maxHeaderLen, maxPaddedUnsignedJWTLen){
       sub_value_with_quotes, sub_value_length
   );
 
-  component HASH = IdentifierHashByPoseidon(maxSubLen, 16);
+  component idHasher = IdHashPoseidon(maxSubLen, 16);
 
-  HASH.sub <== sub;
-  HASH.salt <== salt;
+  idHasher.sub <== sub;
+  idHasher.salt <== salt;
 
-  id_hash <== HASH.out;
+  id_hash <== idHasher.out;
 }
 
 component main {public [pubkey, salt]} = ZkLogin(256, 1024);
