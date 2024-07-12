@@ -1,65 +1,29 @@
-# Zk Jwt Auth Circuit
+# Portkey zkLogin Circuits
 
-[![Test](https://github.com/Portkey-Wallet/zkJwtAuth-circuit/actions/workflows/test.yml/badge.svg)](https://github.com/Portkey-Wallet/zkJwtAuth-circuit/actions/workflows/test.yml)
+[![Test](https://github.com/Portkey-Wallet/zkLogin-circuit/actions/workflows/test.yml/badge.svg)](https://github.com/Portkey-Wallet/zkLogin-circuit/actions/workflows/test.yml)
 
-## Install
+This repo contains 3 circuits:
 
-Run `npm install` at the terminal.
+| Circuit Name | Description |
+|--------------|-------------|
+|[zkLogin](./circuits/zkLogin.circom)|The main zkLogin circuit which verifies jwt token, checks claims such as `sub` and `nonce`, and generates an `id` based on `sub` and `salt` using Poseidon hash function.|
+|[zkLoginSha256](./circuits/zkLoginSha256.circom)|This circuit is similar to `zkLogin` except that it uses Sha256 hash function instead of Poseidon|
+|[idHashMapping](./circuits/idHashMapping.circom)|This circuit is used for backward compatibility. Portkey has existing accounts that derive `id` using Sha256. However going forward if we use Poseidon, we need to know the corresponding `id`. This circuit provides a mapping between these two `id`s without revealing user's `sub`.|
 
-## Build circuit
 
-```bash
-mkdir bls12381
-circom circuits/guardianhash.circom --r1cs --sym --json --wasm -l node_modules -o bls12381 --prime bls12381
+## Test
+
+1. Install dependencies
+
+```
+npm install
 ```
 
-The output files will be at `bls12381` folder.
+2. Run tests
 
-## Test circuit
-
-Run `npm test` at the terminal.
-
-## Prepare the input.json for generating the witness
-
-Run `npm run generateinput` and follow the prompts. Press enter for the defaults.
-
-## Generate the witness
-
-```bash
-cd bls12381/guardianhash_js
-node generate_witness.js guardianhash.wasm ../input.json ../witness.wtns
+```
+npm run test
 ```
 
-## Ceremony
-
-### Phase 1
-
-```bash
-cd bls12381
-snarkjs powersoftau new bls12381 20 pot20_0000.ptau -v
-snarkjs powersoftau contribute pot20_0000.ptau pot20_0001.ptau --name="First contribution" -v
-snarkjs powersoftau prepare phase2 pot20_0001.ptau pot20_final.ptau -v
-```
-
-### Phase 2
-
-```bash
-cd bls12381
-snarkjs groth16 setup guardianhash.r1cs pot20_final.ptau guardianhash_0000.zkey
-snarkjs zkey contribute guardianhash_0000.zkey guardianhash_0001.zkey --name="1st Contributor Name" -v
-snarkjs zkey export verificationkey guardianhash_0001.zkey verification_key.json
-```
-
-## Proof generation
-
-```bash
-cd bls12381
-snarkjs groth16 prove guardianhash_0001.zkey witness.wtns proof.json public.json
-```
-
-## Verify
-
-```bash
-cd bls12381
-snarkjs groth16 verify verification_key.json public.json proof.json
-```
+## Notes
+To use the circuits, we need to run the [Groth16 Trusted Setup](https://zkproof.org/2021/06/30/setup-ceremonies/) to create the `zkey` and use a service to prepare the input in the format expected by the circuits. Our corresponding proving service is hosted in [this repo](https://github.com/Portkey-Wallet/ProvingService).
