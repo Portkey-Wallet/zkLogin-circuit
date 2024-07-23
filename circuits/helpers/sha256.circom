@@ -53,14 +53,16 @@ template Sha256PadBytes(max_bytes) {
     // in_bytes + 1 bytes + 8 bytes length < max_bytes
     assert(in_bytes + 9 < max_bytes);
 
-    padded_len <-- (in_bytes + 9) + (64 - (in_bytes + 9) % 64);
+    var padding_len = (in_bytes + 9) == 64 ? 0 : 64 - (in_bytes + 9) % 64;
+
+    padded_len <-- (in_bytes + 9) + padding_len;
     assert(padded_len % 64 == 0);
 
     component len2bytes = Packed2BytesBigEndian(8);
     len2bytes.in <== in_bytes * 8;
 
     for (var i = 0; i < max_bytes; i++) {
-        padded_text[i] <-- i < in_bytes ? in[i] : (i == in_bytes ? (1 << 7) : (i < padded_len ? (i % 64 < 56 ? 0 : (i % 64 > 56 ? len2bytes.out[(i % 64 - 56)]: 0)) : 0)); // Add the 1 on the end and text length
+        padded_text[i] <-- i < in_bytes ? in[i] : (i == in_bytes ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
     }
 }
 
@@ -75,15 +77,16 @@ template Sha256Pad(max_bytes) {
 
     // len.length + 1 bytes + 8 bytes length < max_bytes
     assert(len.length + 9 < max_bytes);
+    var padding_len = (len.length + 9) == 64 ? 0 : 64 - (len.length + 9) % 64;
 
-    padded_len <-- (len.length + 9) + (64 - (len.length + 9) % 64);
+    padded_len <-- (len.length + 9) + padding_len;
     assert(padded_len % 64 == 0);
 
     component len2bytes = Packed2BytesBigEndian(8);
     len2bytes.in <== len.length * 8;
 
     for (var i = 0; i < max_bytes; i++) {
-        padded_text[i] <-- i < len.length ? text[i] : (i == len.length ? (1 << 7) : (i < padded_len ? (i % 64 < 56 ? 0 : (i % 64 > 56 ? len2bytes.out[(i % 64 - 56)]: 0)) : 0)); // Add the 1 on the end and text length
+        padded_text[i] <-- i < len.length ? text[i] : (i == len.length ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
     }
 }
 
