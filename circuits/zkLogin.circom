@@ -118,4 +118,4 @@ template ZkLogin(maxHeaderLen, maxPaddedUnsignedJWTLen){
   id_hash <== idHasher.out;
 }
 
-component main {public [pubkey, salt]} = ZkLogin(256, 1024);
+component main {public [pubkey, salt]} = ZkLogin(256, 1088);

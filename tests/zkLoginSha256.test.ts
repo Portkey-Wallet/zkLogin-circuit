@@ -37,7 +37,7 @@ describe("Sha256 Id Hash Test", () => {
 
       let jwtBytes = Array.from(jwt);
 
-      jwtBytes.push(...new Array(1024 - jwtBytes.length).fill(0));
+      jwtBytes.push(...new Array(1088 - jwtBytes.length).fill(0));
 
       const data = {
         padded_unsigned_jwt: jwtBytes,
