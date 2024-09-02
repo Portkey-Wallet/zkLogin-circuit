@@ -45,7 +45,7 @@ template Sha256BytesOutputBytes(max_num_bytes) {
     SHA256BYTES.in_len_padded_bytes <== in_len_padded_bytes;
     component B2B = BitsToBytes(256);
     B2B.in <== SHA256BYTES.out;
-    out <-- B2B.out;
+    out <== B2B.out;
 }
 
 template Sha256Bytes(max_num_bytes) {
