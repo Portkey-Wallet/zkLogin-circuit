@@ -229,6 +229,6 @@ template BitsToBytes(bits){
     for (var j=0; j<8; j++) {
       bytevalue |= in[i * 8 + j] ? (1 << (7-j)) : 0;
     }
-    out[i] <-- bytevalue;
+    out[i] <== bytevalue;
   }
 }
