@@ -8,6 +8,7 @@ include "./utils.circom";
 include "./string.circom";
 include "./sha256general.circom";
 include "./sha256partial.circom";
+include "./sha256-new.circom";
 
 template Sha256PadAndHash(max_bytes){
   signal input in[max_bytes];
@@ -91,6 +92,8 @@ template Sha256PadBytes(max_bytes) {
     for (var i = 0; i < max_bytes; i++) {
         padded_text[i] <-- i < in_bytes ? in[i] : (i == in_bytes ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
     }
+
+    SHA2PadVerifier(max_bytes)(padded_text, padded_len, in_bytes);
 }
 
 template Sha256Pad(max_bytes) {
@@ -115,6 +118,8 @@ template Sha256Pad(max_bytes) {
     for (var i = 0; i < max_bytes; i++) {
         padded_text[i] <-- i < len.length ? text[i] : (i == len.length ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
     }
+
+    SHA2PadVerifier(max_bytes)(padded_text, padded_len, len.length);
 }
 
 template Sha256String(max_bytes) {
