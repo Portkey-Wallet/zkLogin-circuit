@@ -224,11 +224,12 @@ template CombineBytes(first_bytes, second_bytes) {
 template BitsToBytes(bits){
   signal input in[bits];
   signal output out[bits/8];
+  component b2n[bits/8];
   for (var i=0; i<bits/8; i++) {
-    var bytevalue = 0;
-    for (var j=0; j<8; j++) {
-      bytevalue |= in[i * 8 + j] ? (1 << (7-j)) : 0;
+    b2n[i] = Bits2Num(8);
+    for (var j = 0;j < 8;j++) {
+        b2n[i].in[j] <== in[i * 8 + 7 - j];
     }
-    out[i] <== bytevalue;
+    out[i] <== b2n[i].out;
   }
 }
