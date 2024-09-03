@@ -5,9 +5,9 @@ pragma circom 2.1.5;
 
 include "circomlib/circuits/bitify.circom";
 include "./utils.circom";
-include "./string.circom";
 include "./sha256general.circom";
 include "./sha256partial.circom";
+include "./sha256-new.circom";
 
 template Sha256PadAndHash(max_bytes){
   signal input in[max_bytes];
@@ -15,18 +15,13 @@ template Sha256PadAndHash(max_bytes){
   signal output out[32];
 
   var max_padded_len = (max_bytes + 9) + (64 - (max_bytes + 9) % 64);
-
-  var paddedBytes[max_padded_len];
-  for (var i = 0; i < in_len; i++) {
-      paddedBytes[i] = in[i];
-  }
-
-  for (var i = in_len; i < max_padded_len; i++) {
-      paddedBytes[i] = 0;
+  signal padded_in[max_padded_len];
+  for (var i = 0; i < max_padded_len; i++) {
+    padded_in[i] <== i < max_bytes ? in[i] : 0;
   }
 
   component sha256Pad = Sha256PadBytes(max_padded_len);
-  sha256Pad.in <-- paddedBytes;
+  sha256Pad.in <== SliceFromStart(max_padded_len, max_padded_len)(padded_in, in_len);
   sha256Pad.in_bytes <== in_len;
 
   component sha256BB = Sha256BytesOutputBytes(max_padded_len);
@@ -45,7 +40,7 @@ template Sha256BytesOutputBytes(max_num_bytes) {
     SHA256BYTES.in_len_padded_bytes <== in_len_padded_bytes;
     component B2B = BitsToBytes(256);
     B2B.in <== SHA256BYTES.out;
-    out <-- B2B.out;
+    out <== B2B.out;
 }
 
 template Sha256Bytes(max_num_bytes) {
@@ -91,39 +86,6 @@ template Sha256PadBytes(max_bytes) {
     for (var i = 0; i < max_bytes; i++) {
         padded_text[i] <-- i < in_bytes ? in[i] : (i == in_bytes ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
     }
-}
 
-template Sha256Pad(max_bytes) {
-    signal input text[max_bytes];
-    signal output padded_text[max_bytes];
-    signal output padded_len;
-
-    // text length
-    component len = Len(max_bytes);
-    len.text <== text;
-
-    // len.length + 1 bytes + 8 bytes length < max_bytes
-    assert(len.length + 9 < max_bytes);
-    var padding_len = (len.length + 9) == 64 ? 0 : 64 - (len.length + 9) % 64;
-
-    padded_len <-- (len.length + 9) + padding_len;
-    assert(padded_len % 64 == 0);
-
-    component len2bytes = Packed2BytesBigEndian(8);
-    len2bytes.in <== len.length * 8;
-
-    for (var i = 0; i < max_bytes; i++) {
-        padded_text[i] <-- i < len.length ? text[i] : (i == len.length ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
-    }
-}
-
-template Sha256String(max_bytes) {
-    signal input text[max_bytes];
-    signal output sha[256];
-
-    // text pad
-    component sha256Pad = Sha256Pad(max_bytes);
-    sha256Pad.text <== text;
-
-    sha <== Sha256Bytes(max_bytes)(sha256Pad.padded_text, sha256Pad.padded_len);
+    SHA2PadVerifier(max_bytes)(padded_text, padded_len, in_bytes);
 }

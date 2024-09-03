@@ -3,7 +3,6 @@
 
 pragma circom 2.1.5;
 
-include "./string.circom";
 include "./sha256-new.circom";
 include "./rsa-new.circom";
 
