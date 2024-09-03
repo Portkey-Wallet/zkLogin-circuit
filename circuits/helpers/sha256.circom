@@ -5,7 +5,6 @@ pragma circom 2.1.5;
 
 include "circomlib/circuits/bitify.circom";
 include "./utils.circom";
-include "./string.circom";
 include "./sha256general.circom";
 include "./sha256partial.circom";
 include "./sha256-new.circom";
@@ -89,41 +88,4 @@ template Sha256PadBytes(max_bytes) {
     }
 
     SHA2PadVerifier(max_bytes)(padded_text, padded_len, in_bytes);
-}
-
-template Sha256Pad(max_bytes) {
-    signal input text[max_bytes];
-    signal output padded_text[max_bytes];
-    signal output padded_len;
-
-    // text length
-    component len = Len(max_bytes);
-    len.text <== text;
-
-    // len.length + 1 bytes + 8 bytes length < max_bytes
-    assert(len.length + 9 < max_bytes);
-    var padding_len = (len.length + 9) == 64 ? 0 : 64 - (len.length + 9) % 64;
-
-    padded_len <-- (len.length + 9) + padding_len;
-    assert(padded_len % 64 == 0);
-
-    component len2bytes = Packed2BytesBigEndian(8);
-    len2bytes.in <== len.length * 8;
-
-    for (var i = 0; i < max_bytes; i++) {
-        padded_text[i] <-- i < len.length ? text[i] : (i == len.length ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
-    }
-
-    SHA2PadVerifier(max_bytes)(padded_text, padded_len, len.length);
-}
-
-template Sha256String(max_bytes) {
-    signal input text[max_bytes];
-    signal output sha[256];
-
-    // text pad
-    component sha256Pad = Sha256Pad(max_bytes);
-    sha256Pad.text <== text;
-
-    sha <== Sha256Bytes(max_bytes)(sha256Pad.padded_text, sha256Pad.padded_len);
 }
