@@ -16,18 +16,13 @@ template Sha256PadAndHash(max_bytes){
   signal output out[32];
 
   var max_padded_len = (max_bytes + 9) + (64 - (max_bytes + 9) % 64);
-
-  var paddedBytes[max_padded_len];
-  for (var i = 0; i < in_len; i++) {
-      paddedBytes[i] = in[i];
-  }
-
-  for (var i = in_len; i < max_padded_len; i++) {
-      paddedBytes[i] = 0;
+  signal padded_in[max_padded_len];
+  for (var i = 0; i < max_padded_len; i++) {
+    padded_in[i] <== i < max_bytes ? in[i] : 0;
   }
 
   component sha256Pad = Sha256PadBytes(max_padded_len);
-  sha256Pad.in <-- paddedBytes;
+  sha256Pad.in <== SliceFromStart(max_padded_len, max_padded_len)(padded_in, in_len);
   sha256Pad.in_bytes <== in_len;
 
   component sha256BB = Sha256BytesOutputBytes(max_padded_len);
