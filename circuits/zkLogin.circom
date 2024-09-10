@@ -12,11 +12,6 @@ template ZkLogin(maxHeaderLen, maxPaddedUnsignedJWTLen){
   var maxWhiteSpaceLen = 2; // actually we don't need this
   var maxSubClaimLen = maxSubNameLen + maxSubValueLen + maxWhiteSpaceLen; // TODO: Check if this calculation is correct 
 
-  var maxExpLen = 10;
-  var maxExpNameLen = 5;
-  var maxExpValueLen = maxExpLen;
-  var maxExpClaimLen = maxExpNameLen + maxExpValueLen + maxWhiteSpaceLen; // TODO: Check if this calculation is correct
-
   var maxNonceLen = 64;
   var maxNonceNameLen = 7;
   var maxNonceValueLen = maxNonceLen + 2; // 2 for double quotes
