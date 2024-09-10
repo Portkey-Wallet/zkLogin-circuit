@@ -52,7 +52,6 @@ describe("Id Hash Mapping Test", () => {
         ),
         subLen: 21,
         salt: Array.from(hexToBytes("a677999396dc49a28ad6c9c242719bb3"), (b) => b),
-        saltLen: 16
       };
       // will be packed into [13846356912322354, 85189581377597132177622858375434543549286969422497087616931493135530328064, 0,0,0,0,0,0,0]
 

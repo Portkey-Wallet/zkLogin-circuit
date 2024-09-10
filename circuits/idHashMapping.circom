@@ -7,7 +7,6 @@ template IdHashMapping(maxSubLen, maxSaltLen){
     signal input sub[maxSubLen];
     signal input subLen;
     signal input salt[maxSaltLen];
-    signal input saltLen;
     component poseidonHasher = IdHashPoseidon(maxSubLen, maxSaltLen);
 
     poseidonHasher.sub <== sub;
