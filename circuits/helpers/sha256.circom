@@ -4,6 +4,7 @@
 pragma circom 2.1.5;
 
 include "circomlib/circuits/bitify.circom";
+include "./misc.circom";
 include "./utils.circom";
 include "./sha256general.circom";
 include "./sha256partial.circom";
@@ -71,6 +72,7 @@ template Sha256PadBytes(max_bytes) {
     signal input in_bytes;
     signal output padded_text[max_bytes];
     signal output padded_len;
+    assert(in_bytes > 0);
 
     // in_bytes + 1 bytes + 8 bytes length < max_bytes
     assert(in_bytes + 9 < max_bytes);
@@ -87,5 +89,9 @@ template Sha256PadBytes(max_bytes) {
         padded_text[i] <-- i < in_bytes ? in[i] : (i == in_bytes ? (1 << 7) : ((i < padded_len && i >= padded_len - 8) ? len2bytes.out[(i % 64 - 56)]: 0)); // Add the 1 on the end and text length
     }
 
+    signal enabled[max_bytes] <== LTBitVector(max_bytes)(in_bytes);
+    for (var i = 0; i < max_bytes; i++) {
+        AssertEqualIfEnabled()(enabled[i], [padded_text[i], in[i]]);
+    }
     SHA2PadVerifier(max_bytes)(padded_text, padded_len, in_bytes);
 }
